@@ -175,24 +175,23 @@ describe('Security & Red-Team Adversarial Test Suite (10 Cases)', () => {
   });
 
   // Red Team Case 8
-  it('Case 8: Audit row edited out-of-band → verifyChain fails and identifies exact tampered sequence', () => {
-    const db = getDb();
-    // Simulate raw DB tampering by dropping trigger temporarily and altering payload
-    db.exec('DROP TRIGGER IF EXISTS audit_no_update;');
+  it('Case 8: Audit row edited out-of-band → verifyChain fails and identifies exact tampered sequence', async () => {
+    const Database = (await import('better-sqlite3')).default;
+    const { initSchema } = await import('../src/db');
+    const { logAuditEvent } = await import('../src/security/audit');
+    const testDb = new Database(':memory:');
+    initSchema(testDb);
 
-    const lastEvent = db.prepare('SELECT seq FROM audit_events ORDER BY seq DESC LIMIT 1').get() as any;
-    if (lastEvent) {
-      db.prepare(`UPDATE audit_events SET payload_json = '{"tampered": true}' WHERE seq = ?`).run(lastEvent.seq);
-      const verification = verifyChain(db);
-      expect(verification.valid).toBe(false);
-      expect(verification.brokenAt).toBe(lastEvent.seq);
+    logAuditEvent({ actor: 'user', action: 'EVENT_1', tier: 'L0', decision: 'ALLOW', rule_ids: [], payload: {}, customDb: testDb });
+    logAuditEvent({ actor: 'user', action: 'EVENT_2', tier: 'L1', decision: 'ALLOW', rule_ids: [], payload: {}, customDb: testDb });
 
-      // Re-enable trigger
-      db.exec(`
-        CREATE TRIGGER audit_no_update BEFORE UPDATE ON audit_events
-        BEGIN SELECT RAISE(FAIL, 'Audit log is strictly append-only: UPDATE prohibited'); END;
-      `);
-    }
+    // Simulate raw DB tampering by dropping trigger temporarily and altering payload at seq 2
+    testDb.exec('DROP TRIGGER IF EXISTS audit_no_update;');
+    testDb.prepare(`UPDATE audit_events SET payload_json = '{"tampered": true}' WHERE seq = 2`).run();
+
+    const verification = verifyChain(testDb);
+    expect(verification.valid).toBe(false);
+    expect(verification.brokenAt).toBe(2);
   });
 
   // Red Team Case 9

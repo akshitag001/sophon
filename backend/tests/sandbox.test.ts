@@ -14,7 +14,7 @@ describe('Domain: Simulated Brokerage Sandbox', () => {
   beforeEach(() => {
     const db = getDb();
     resetClock(db);
-    db.prepare('DELETE FROM orders WHERE user_id = ?').run('test_user');
+    db.prepare('DELETE FROM orders').run();
     db.prepare('DELETE FROM holdings WHERE user_id = ?').run('test_user');
     db.prepare('DELETE FROM accounts WHERE user_id = ?').run('test_user');
     ensureUserAccount('test_user', 10000, db);

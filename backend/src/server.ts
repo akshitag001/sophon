@@ -1,5 +1,8 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 import { config } from './config';
 import { getDb } from './db';
 
@@ -9,6 +12,9 @@ import { planRouter } from './routes/plan';
 import { portfolioRouter } from './routes/portfolio';
 import { agentRouter } from './routes/agent';
 import { auditRouter } from './routes/audit';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export const app = express();
 
@@ -35,6 +41,26 @@ app.use('/portfolio', portfolioRouter);
 app.use('/agent', agentRouter);
 app.use('/audit', auditRouter);
 app.use('/', portfolioRouter); // mount sandbox routes directly at /sandbox/advance etc.
+
+// Static frontend serving for single container deployment
+const candidateDistPaths = [
+  path.resolve(__dirname, '../../frontend/dist'),
+  path.resolve(process.cwd(), 'frontend/dist'),
+  path.resolve(process.cwd(), '../frontend/dist')
+];
+
+for (const distPath of candidateDistPaths) {
+  if (fs.existsSync(distPath)) {
+    app.use(express.static(distPath));
+    app.get('*', (req: Request, res: Response, next: NextFunction) => {
+      if (req.path.startsWith('/api') || req.path.startsWith('/profile') || req.path.startsWith('/products') || req.path.startsWith('/portfolio') || req.path.startsWith('/plan') || req.path.startsWith('/agent') || req.path.startsWith('/audit') || req.path.startsWith('/sandbox')) {
+        return next();
+      }
+      res.sendFile(path.join(distPath, 'index.html'));
+    });
+    break;
+  }
+}
 
 // Central Error Handler
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
