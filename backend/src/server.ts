@@ -3,6 +3,13 @@ import cors from 'cors';
 import { config } from './config';
 import { getDb } from './db';
 
+import { profileRouter } from './routes/profile';
+import { productsRouter } from './routes/products';
+import { planRouter } from './routes/plan';
+import { portfolioRouter } from './routes/portfolio';
+import { agentRouter } from './routes/agent';
+import { auditRouter } from './routes/audit';
+
 export const app = express();
 
 app.use(cors());
@@ -19,6 +26,15 @@ app.get('/health', (req: Request, res: Response) => {
     time: new Date().toISOString()
   });
 });
+
+// Mount Domain and Feature Routes
+app.use('/profile', profileRouter);
+app.use('/products', productsRouter);
+app.use('/plan', planRouter);
+app.use('/portfolio', portfolioRouter);
+app.use('/agent', agentRouter);
+app.use('/audit', auditRouter);
+app.use('/', portfolioRouter); // mount sandbox routes directly at /sandbox/advance etc.
 
 // Central Error Handler
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
