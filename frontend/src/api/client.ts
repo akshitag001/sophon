@@ -319,6 +319,33 @@ export const api = {
       body: JSON.stringify({ proposalId, typedAmount, pin })
     }),
 
+  // Security & Red Team Suite
+  getRedTeamCases: () =>
+    fetchJson<{ cases: RedTeamCase[]; total: number; coverage: string }>('/security/redteam'),
+  runRedTeamCase: (testId?: number, runAll = false) =>
+    fetchJson<{
+      allPassed?: boolean;
+      passedCount?: number;
+      totalCount?: number;
+      results?: Array<RedTeamCase & { passed: boolean; durationMs: number; interceptedRule: string; details: string }>;
+      passed?: boolean;
+      durationMs?: number;
+      interceptedRule?: string;
+      details?: string;
+    }>('/security/redteam/run', {
+      method: 'POST',
+      body: JSON.stringify({ testId, runAll })
+    }),
+  getSuitabilityMatrix: (userId: string) =>
+    fetchJson<{ userId: string; userRiskLevel: number | null; matrix: SuitabilityMatrixRow[] }>(
+      `/security/matrix/${userId}`
+    ),
+  scanSecurityPayload: (text: string, userId?: string) =>
+    fetchJson<{ detected: boolean; patternIds: string[]; quarantinedText: string }>('/security/scan', {
+      method: 'POST',
+      body: JSON.stringify({ text, userId })
+    }),
+
   // Audit
   getAuditEvents: (userId?: string, limit = 200) => {
     const url = userId ? `/audit/${userId}?limit=${limit}` : `/audit?limit=${limit}`;
@@ -328,3 +355,39 @@ export const api = {
     fetchJson<{ valid: boolean; totalEvents: number; brokenAt?: number; reason?: string }>('/audit/verify'),
   exportAuditUrl: () => `${API_BASE}/audit/export`
 };
+
+export interface RedTeamCase {
+  id: number;
+  title: string;
+  category: string;
+  stride: string;
+  description: string;
+  expectedDefense: string;
+  targetRule: string;
+  passed?: boolean;
+  durationMs?: number;
+  interceptedRule?: string;
+  details?: string;
+}
+
+export interface SuitabilityMatrixRow {
+  id: string;
+  name: string;
+  assetClass: string;
+  riskLevel: number;
+  minInvestment: number;
+  terBps: number;
+  overallAllowed: boolean;
+  reasons: string[];
+  warnings: string[];
+  rules: {
+    S1: { name: string; allowed: boolean; note: string };
+    S2: { name: string; allowed: boolean; note: string };
+    S3: { name: string; allowed: boolean; note: string };
+    S4: { name: string; allowed: boolean; note: string };
+    S5: { name: string; allowed: boolean; note: string };
+    S6: { name: string; allowed: boolean; note: string };
+    S7: { name: string; allowed: boolean; note: string };
+  };
+}
+

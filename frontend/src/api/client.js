@@ -92,6 +92,17 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ proposalId, typedAmount, pin })
     }),
+    // Security & Red Team Suite
+    getRedTeamCases: () => fetchJson('/security/redteam'),
+    runRedTeamCase: (testId, runAll = false) => fetchJson('/security/redteam/run', {
+        method: 'POST',
+        body: JSON.stringify({ testId, runAll })
+    }),
+    getSuitabilityMatrix: (userId) => fetchJson(`/security/matrix/${userId}`),
+    scanSecurityPayload: (text, userId) => fetchJson('/security/scan', {
+        method: 'POST',
+        body: JSON.stringify({ text, userId })
+    }),
     // Audit
     getAuditEvents: (userId, limit = 200) => {
         const url = userId ? `/audit/${userId}?limit=${limit}` : `/audit?limit=${limit}`;

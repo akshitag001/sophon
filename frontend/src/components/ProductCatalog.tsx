@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { api, Product, ProductComparison, RiskProfile } from '../api/client';
+import { api, Product, ProductComparison, RiskProfile, SuitabilityMatrixRow } from '../api/client';
 import {
   Layers,
   Lock,
@@ -11,7 +11,11 @@ import {
   TrendingUp,
   Percent,
   Calendar,
-  DollarSign
+  DollarSign,
+  ShieldCheck,
+  CheckCircle2,
+  XCircle,
+  AlertCircle
 } from 'lucide-react';
 
 interface ProductCatalogProps {
@@ -26,6 +30,11 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ userProfile }) =
   const [loading, setLoading] = useState(true);
   const [comparing, setComparing] = useState(false);
 
+  // Suitability Matrix View state
+  const [showMatrix, setShowMatrix] = useState<boolean>(false);
+  const [matrixData, setMatrixData] = useState<SuitabilityMatrixRow[]>([]);
+  const [loadingMatrix, setLoadingMatrix] = useState<boolean>(false);
+
   useEffect(() => {
     loadProducts();
   }, []);
@@ -39,6 +48,22 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ userProfile }) =
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleMatrix = async () => {
+    const nextState = !showMatrix;
+    setShowMatrix(nextState);
+    if (nextState && matrixData.length === 0) {
+      setLoadingMatrix(true);
+      try {
+        const res = await api.getSuitabilityMatrix(userProfile?.user_id || 'priya');
+        setMatrixData(res.matrix);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoadingMatrix(false);
+      }
     }
   };
 
@@ -93,26 +118,191 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ userProfile }) =
           </p>
         </div>
 
-        {/* Categories */}
-        <div className="flex flex-wrap gap-1.5 bg-navy-950 p-1.5 rounded-xl border border-navy-800">
-          {['all', 'cash', 'bonds', 'balanced', 'equity', 'real_assets'].map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition ${
-                selectedCategory === cat
-                  ? 'bg-brand-cyan text-navy-950 shadow-md shadow-brand-cyan/20'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              {cat.replace('_', ' ')}
-            </button>
-          ))}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Toggle Suitability Matrix View */}
+          <button
+            onClick={handleToggleMatrix}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition border ${
+              showMatrix
+                ? 'bg-blue-600 border-blue-400 text-white shadow-md'
+                : 'bg-navy-950 border-navy-800 text-brand-cyan hover:border-brand-cyan/40'
+            }`}
+          >
+            <ShieldCheck className="w-4 h-4" />
+            <span>{showMatrix ? 'Show Standard Catalog' : 'View S1–S7 Suitability Matrix'}</span>
+          </button>
+
+          {/* Categories */}
+          {!showMatrix && (
+            <div className="flex flex-wrap gap-1 bg-navy-950 p-1 rounded-xl border border-navy-800">
+              {['all', 'cash', 'bonds', 'balanced', 'equity', 'real_assets'].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold capitalize transition ${
+                    selectedCategory === cat
+                      ? 'bg-brand-cyan text-navy-950 shadow-md shadow-brand-cyan/20'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  {cat.replace('_', ' ')}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
+      {/* S1-S7 Matrix View */}
+      {showMatrix && (
+        <div className="bg-navy-900 border border-navy-800 rounded-2xl p-5 shadow-xl space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                Active Regulatory Suitability Matrix (Rules S1–S7)
+              </h3>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Evaluated for client {userProfile ? `${userProfile.user_id.toUpperCase()} (Risk Level ${userProfile.level}/5)` : 'Retail Investor'}.
+                Guaranteed in code prior to any broker order submission.
+              </p>
+            </div>
+          </div>
+
+          {loadingMatrix ? (
+            <div className="p-8 text-center text-slate-400 text-xs">Loading suitability evaluations...</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-navy-800 bg-navy-950/60 text-[11px] font-mono uppercase text-slate-400">
+                    <th className="p-3">Product Name</th>
+                    <th className="p-3">Asset Class</th>
+                    <th className="p-3">Risk Level</th>
+                    <th className="p-3">S1: Risk Ceiling</th>
+                    <th className="p-3">S2: KYC Expiry</th>
+                    <th className="p-3">S3: Contradiction</th>
+                    <th className="p-3">S4: Emergency Res.</th>
+                    <th className="p-3">S5: 40% Conc.</th>
+                    <th className="p-3">S6: Liquidity</th>
+                    <th className="p-3">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-navy-800/60">
+                  {matrixData.map((row) => (
+                    <tr
+                      key={row.id}
+                      className={`hover:bg-navy-850/50 transition ${
+                        !row.overallAllowed ? 'bg-rose-950/10' : ''
+                      }`}
+                    >
+                      <td className="p-3 font-semibold text-white">
+                        {row.name}
+                        <span className="block text-[10px] font-mono text-slate-500">{row.id}</span>
+                      </td>
+                      <td className="p-3 font-mono text-slate-300 capitalize">{row.assetClass}</td>
+                      <td className="p-3">
+                        <span
+                          className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
+                            row.riskLevel <= (userProfile?.level || 2)
+                              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                              : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                          }`}
+                        >
+                          L{row.riskLevel}/5
+                        </span>
+                      </td>
+
+                      {/* S1 to S6 Rule Badges */}
+                      <td className="p-3">
+                        {row.rules.S1.allowed ? (
+                          <span className="text-emerald-400 flex items-center gap-1 font-mono text-[11px]">
+                            <CheckCircle2 className="w-3.5 h-3.5" /> Pass
+                          </span>
+                        ) : (
+                          <span className="text-rose-400 flex items-center gap-1 font-mono text-[11px]">
+                            <XCircle className="w-3.5 h-3.5" /> Block
+                          </span>
+                        )}
+                      </td>
+                      <td className="p-3">
+                        {row.rules.S2.allowed ? (
+                          <span className="text-emerald-400 flex items-center gap-1 font-mono text-[11px]">
+                            <CheckCircle2 className="w-3.5 h-3.5" /> Pass
+                          </span>
+                        ) : (
+                          <span className="text-rose-400 flex items-center gap-1 font-mono text-[11px]">
+                            <XCircle className="w-3.5 h-3.5" /> Expired
+                          </span>
+                        )}
+                      </td>
+                      <td className="p-3">
+                        {row.rules.S3.allowed ? (
+                          <span className="text-emerald-400 flex items-center gap-1 font-mono text-[11px]">
+                            <CheckCircle2 className="w-3.5 h-3.5" /> Clear
+                          </span>
+                        ) : (
+                          <span className="text-amber-400 flex items-center gap-1 font-mono text-[11px]">
+                            <AlertCircle className="w-3.5 h-3.5" /> Flag
+                          </span>
+                        )}
+                      </td>
+                      <td className="p-3">
+                        {row.rules.S4.allowed ? (
+                          <span className="text-emerald-400 flex items-center gap-1 font-mono text-[11px]">
+                            <CheckCircle2 className="w-3.5 h-3.5" /> OK
+                          </span>
+                        ) : (
+                          <span className="text-rose-400 flex items-center gap-1 font-mono text-[11px]">
+                            <XCircle className="w-3.5 h-3.5" /> Block
+                          </span>
+                        )}
+                      </td>
+                      <td className="p-3">
+                        {row.rules.S5.allowed ? (
+                          <span className="text-emerald-400 flex items-center gap-1 font-mono text-[11px]">
+                            <CheckCircle2 className="w-3.5 h-3.5" /> OK
+                          </span>
+                        ) : (
+                          <span className="text-rose-400 flex items-center gap-1 font-mono text-[11px]">
+                            <XCircle className="w-3.5 h-3.5" /> Cap
+                          </span>
+                        )}
+                      </td>
+                      <td className="p-3">
+                        {row.rules.S6.allowed ? (
+                          <span className="text-emerald-400 flex items-center gap-1 font-mono text-[11px]">
+                            <CheckCircle2 className="w-3.5 h-3.5" /> {row.rules.S6.note}
+                          </span>
+                        ) : (
+                          <span className="text-amber-400 flex items-center gap-1 font-mono text-[11px]">
+                            <AlertCircle className="w-3.5 h-3.5" /> Warn
+                          </span>
+                        )}
+                      </td>
+
+                      <td className="p-3">
+                        <span
+                          className={`px-2.5 py-1 rounded-full text-[10px] font-mono font-bold flex items-center gap-1 w-max ${
+                            row.overallAllowed
+                              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                              : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                          }`}
+                        >
+                          {row.overallAllowed ? 'SUITABLE' : 'BLOCKED'}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Floating Compare Action Bar if items selected */}
-      {selectedIds.length > 0 && (
+      {selectedIds.length > 0 && !showMatrix && (
         <div className="fixed bottom-6 right-6 z-40 bg-navy-900 border border-brand-cyan/40 p-4 rounded-2xl shadow-2xl flex items-center gap-4 animate-in fade-in slide-in-from-bottom-5 duration-300">
           <div className="text-xs text-slate-300">
             <span className="font-bold text-brand-cyan">{selectedIds.length}</span> / 3 products selected for comparison
@@ -133,95 +323,97 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ userProfile }) =
         </div>
       )}
 
-      {/* Products Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {filteredProducts.map((p) => {
-          const isBlocked = p.risk_level > userMaxRisk;
-          const isSelected = selectedIds.includes(p.id);
+      {/* Standard Products Grid */}
+      {!showMatrix && (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {filteredProducts.map((p) => {
+            const isBlocked = p.risk_level > userMaxRisk;
+            const isSelected = selectedIds.includes(p.id);
 
-          return (
-            <div
-              key={p.id}
-              className={`p-5 rounded-2xl border transition-all relative overflow-hidden flex flex-col justify-between ${
-                isBlocked
-                  ? 'bg-navy-950/60 border-rose-900/40 opacity-70 hover:opacity-100'
-                  : isSelected
-                  ? 'bg-navy-850 border-brand-cyan shadow-xl shadow-brand-cyan/10'
-                  : 'bg-navy-900 hover:bg-navy-850/80 border-navy-800'
-              }`}
-            >
-              <div>
-                {/* Top badges */}
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 bg-navy-950 px-2 py-0.5 rounded border border-navy-800">
-                    {p.asset_class.replace('_', ' ')}
-                  </span>
-
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1 ${
-                        isBlocked
-                          ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
-                          : p.risk_level <= 2
-                          ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                          : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                      }`}
-                    >
-                      {isBlocked && <Lock className="w-2.5 h-2.5" />}
-                      Risk {p.risk_level}/5
+            return (
+              <div
+                key={p.id}
+                className={`p-5 rounded-2xl border transition-all relative overflow-hidden flex flex-col justify-between ${
+                  isBlocked
+                    ? 'bg-navy-950/60 border-rose-900/40 opacity-70 hover:opacity-100'
+                    : isSelected
+                    ? 'bg-navy-850 border-brand-cyan shadow-xl shadow-brand-cyan/10'
+                    : 'bg-navy-900 hover:bg-navy-850/80 border-navy-800'
+                }`}
+              >
+                <div>
+                  {/* Top badges */}
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 bg-navy-950 px-2 py-0.5 rounded border border-navy-800">
+                      {p.asset_class.replace('_', ' ')}
                     </span>
 
-                    <button
-                      onClick={() => handleToggleSelect(p.id)}
-                      className="text-slate-400 hover:text-brand-cyan transition"
-                    >
-                      {isSelected ? (
-                        <CheckSquare className="w-4 h-4 text-brand-cyan" />
-                      ) : (
-                        <Square className="w-4 h-4 text-slate-500" />
-                      )}
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1 ${
+                          isBlocked
+                            ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                            : p.risk_level <= 2
+                            ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                            : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                        }`}
+                      >
+                        {isBlocked && <Lock className="w-2.5 h-2.5" />}
+                        Risk {p.risk_level}/5
+                      </span>
+
+                      <button
+                        onClick={() => handleToggleSelect(p.id)}
+                        className="text-slate-400 hover:text-brand-cyan transition"
+                      >
+                        {isSelected ? (
+                          <CheckSquare className="w-4 h-4 text-brand-cyan" />
+                        ) : (
+                          <Square className="w-4 h-4 text-slate-500" />
+                        )}
+                      </button>
+                    </div>
                   </div>
+
+                  <h3 className="text-base font-bold text-white mb-1.5 leading-snug">{p.name}</h3>
+                  <p className="text-xs text-slate-400 mb-4 line-clamp-2">{p.description}</p>
                 </div>
 
-                <h3 className="text-base font-bold text-white mb-1.5 leading-snug">{p.name}</h3>
-                <p className="text-xs text-slate-400 mb-4 line-clamp-2">{p.description}</p>
-              </div>
+                {/* Metrics Pill Matrix */}
+                <div>
+                  <div className="grid grid-cols-3 gap-2 py-3 border-y border-navy-800/80 my-2 text-center">
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">Exp. Return</span>
+                      <span className="text-xs font-bold text-emerald-400">
+                        +{(p.expected_return * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">Volatility</span>
+                      <span className="text-xs font-bold text-amber-300">
+                        {(p.volatility * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">Expense Ratio</span>
+                      <span className="text-xs font-bold text-slate-300">
+                        {(p.expense_ratio * 100).toFixed(2)}%
+                      </span>
+                    </div>
+                  </div>
 
-              {/* Metrics Pill Matrix */}
-              <div>
-                <div className="grid grid-cols-3 gap-2 py-3 border-y border-navy-800/80 my-2 text-center">
-                  <div>
-                    <span className="text-[10px] text-slate-400 block">Exp. Return</span>
-                    <span className="text-xs font-bold text-emerald-400">
-                      +{(p.expected_return * 100).toFixed(1)}%
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 block">Volatility</span>
-                    <span className="text-xs font-bold text-amber-300">
-                      {(p.volatility * 100).toFixed(1)}%
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 block">Expense Ratio</span>
-                    <span className="text-xs font-bold text-slate-300">
-                      {(p.expense_ratio * 100).toFixed(2)}%
-                    </span>
-                  </div>
+                  {isBlocked && (
+                    <div className="mt-3 p-2 bg-rose-500/10 border border-rose-500/20 rounded-lg text-[11px] text-rose-300 flex items-center gap-1.5">
+                      <Lock className="w-3.5 h-3.5 shrink-0" />
+                      <span>Suitability Block (S1): Exceeds your Level {userMaxRisk} profile.</span>
+                    </div>
+                  )}
                 </div>
-
-                {isBlocked && (
-                  <div className="mt-3 p-2 bg-rose-500/10 border border-rose-500/20 rounded-lg text-[11px] text-rose-300 flex items-center gap-1.5">
-                    <Lock className="w-3.5 h-3.5 shrink-0" />
-                    <span>Suitability Block (S1): Exceeds your Level {userMaxRisk} profile.</span>
-                  </div>
-                )}
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Side-by-Side Comparison Modal */}
       {comparison && (

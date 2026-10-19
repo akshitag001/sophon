@@ -9,7 +9,9 @@ import {
   RefreshCw,
   ArrowUpRight,
   ArrowDownRight,
-  CheckCircle2
+  CheckCircle2,
+  PieChart,
+  Scale
 } from 'lucide-react';
 
 interface PortfolioViewProps {
@@ -22,6 +24,7 @@ export const PortfolioView: React.FC<PortfolioViewProps> = ({ userId, onNavigate
   const [orders, setOrders] = useState<OrderRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [rebalancing, setRebalancing] = useState(false);
+  const [rebalanceSuccessMsg, setRebalanceSuccessMsg] = useState<string | null>(null);
 
   useEffect(() => {
     loadPortfolioData();
@@ -44,8 +47,10 @@ export const PortfolioView: React.FC<PortfolioViewProps> = ({ userId, onNavigate
 
   const handleRebalance = async () => {
     setRebalancing(true);
+    setRebalanceSuccessMsg(null);
     try {
-      await api.chat(userId, 'session_main', 'Detect drift and rebalance portfolio');
+      const res = await api.chat(userId, 'session_main', 'Detect drift and rebalance portfolio');
+      setRebalanceSuccessMsg(res.reply);
       await loadPortfolioData();
     } catch (err: any) {
       alert(`Rebalancing failed: ${err.message}`);
@@ -61,6 +66,24 @@ export const PortfolioView: React.FC<PortfolioViewProps> = ({ userId, onNavigate
   const totalValue = portfolio?.totalPortfolioValue || 0;
   const cash = portfolio?.cash || 0;
   const holdingsValue = portfolio?.totalHoldingsValue || 0;
+
+  // Compute equity vs fixed income vs cash weights
+  let equityValue = 0;
+  let bondValue = 0;
+  portfolio?.holdings.forEach((h) => {
+    if (h.assetClass === 'equity') equityValue += h.marketValue;
+    else if (h.assetClass === 'bonds') bondValue += h.marketValue;
+  });
+
+  const equityWeight = totalValue > 0 ? (equityValue / totalValue) * 100 : 0;
+  const bondWeight = totalValue > 0 ? (bondValue / totalValue) * 100 : 0;
+  const cashWeight = totalValue > 0 ? (cash / totalValue) * 100 : 100;
+
+  // Target for Level 2 (Chen): 35% Equity, 50% Bonds, 15% Cash
+  const targetEquity = 35;
+  const targetBond = 50;
+  const equityDrift = equityWeight - targetEquity;
+  const hasSignificantDrift = Math.abs(equityDrift) > 5;
 
   return (
     <div className="space-y-6">
@@ -99,6 +122,90 @@ export const PortfolioView: React.FC<PortfolioViewProps> = ({ userId, onNavigate
         </div>
       </div>
 
+      {/* Asset Allocation Drift Analysis Card */}
+      {portfolio && portfolio.holdings.length > 0 && (
+        <div className="bg-navy-900 border border-navy-800 rounded-2xl p-5 shadow-xl space-y-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div>
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <Scale className="w-5 h-5 text-brand-cyan" />
+                Asset Allocation & Portfolio Drift Monitor
+              </h3>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Target Weights vs Current Market Weights. Mandate tolerance band is ±5%.
+              </p>
+            </div>
+
+            <button
+              onClick={handleRebalance}
+              disabled={rebalancing}
+              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-brand-cyan hover:from-blue-500 hover:to-brand-cyan text-white text-xs font-bold rounded-xl transition flex items-center gap-2 shadow-lg shadow-brand-cyan/20 disabled:opacity-50"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${rebalancing ? 'animate-spin' : ''}`} />
+              <span>{rebalancing ? 'Evaluating Rebalance Orders...' : 'Generate Auto-Rebalance Orders'}</span>
+            </button>
+          </div>
+
+          {/* Rebalance Success Banner */}
+          {rebalanceSuccessMsg && (
+            <div className="p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-xl text-xs text-emerald-200 flex items-start gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+              <div>
+                <strong className="block font-bold">Autonomous Advisor Rebalance Triggered:</strong>
+                <p className="mt-0.5 opacity-90">{rebalanceSuccessMsg}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Allocation Drift Bars */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            <div className="bg-navy-950 p-3.5 rounded-xl border border-navy-800 space-y-2">
+              <div className="flex justify-between text-xs">
+                <span className="text-slate-400 font-semibold">Equities</span>
+                <span className="font-mono text-white font-bold">{equityWeight.toFixed(1)}%</span>
+              </div>
+              <div className="w-full bg-navy-850 h-2 rounded-full overflow-hidden">
+                <div className="bg-brand-cyan h-full rounded-full" style={{ width: `${Math.min(equityWeight, 100)}%` }} />
+              </div>
+              <div className="flex justify-between text-[11px] font-mono text-slate-500">
+                <span>Target: {targetEquity}%</span>
+                <span className={equityDrift > 5 ? 'text-amber-400 font-bold' : 'text-emerald-400'}>
+                  Drift: {equityDrift > 0 ? '+' : ''}{equityDrift.toFixed(1)}%
+                </span>
+              </div>
+            </div>
+
+            <div className="bg-navy-950 p-3.5 rounded-xl border border-navy-800 space-y-2">
+              <div className="flex justify-between text-xs">
+                <span className="text-slate-400 font-semibold">Fixed Income / Bonds</span>
+                <span className="font-mono text-white font-bold">{bondWeight.toFixed(1)}%</span>
+              </div>
+              <div className="w-full bg-navy-850 h-2 rounded-full overflow-hidden">
+                <div className="bg-blue-500 h-full rounded-full" style={{ width: `${Math.min(bondWeight, 100)}%` }} />
+              </div>
+              <div className="flex justify-between text-[11px] font-mono text-slate-500">
+                <span>Target: {targetBond}%</span>
+                <span className="text-slate-400">Drift: {(bondWeight - targetBond).toFixed(1)}%</span>
+              </div>
+            </div>
+
+            <div className="bg-navy-950 p-3.5 rounded-xl border border-navy-800 space-y-2">
+              <div className="flex justify-between text-xs">
+                <span className="text-slate-400 font-semibold">Liquid Cash</span>
+                <span className="font-mono text-white font-bold">{cashWeight.toFixed(1)}%</span>
+              </div>
+              <div className="w-full bg-navy-850 h-2 rounded-full overflow-hidden">
+                <div className="bg-emerald-400 h-full rounded-full" style={{ width: `${Math.min(cashWeight, 100)}%` }} />
+              </div>
+              <div className="flex justify-between text-[11px] font-mono text-slate-500">
+                <span>Target: 15%</span>
+                <span className="text-slate-400">Buffer Active</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Holdings Table */}
       <div className="bg-navy-900 border border-navy-800 rounded-2xl p-5 shadow-xl">
         <div className="flex items-center justify-between mb-4">
@@ -106,14 +213,6 @@ export const PortfolioView: React.FC<PortfolioViewProps> = ({ userId, onNavigate
             <Wallet className="w-5 h-5 text-brand-cyan" />
             <h3 className="text-base font-bold text-white">Current Asset Holdings</h3>
           </div>
-          <button
-            onClick={handleRebalance}
-            disabled={rebalancing || !portfolio?.holdings.length}
-            className="px-3.5 py-1.5 bg-navy-800 hover:bg-navy-700 text-slate-200 border border-navy-700 text-xs font-semibold rounded-xl transition flex items-center gap-1.5"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${rebalancing ? 'animate-spin text-brand-cyan' : ''}`} />
-            Check Drift & Auto-Rebalance
-          </button>
         </div>
 
         {!portfolio?.holdings.length ? (
@@ -173,7 +272,7 @@ export const PortfolioView: React.FC<PortfolioViewProps> = ({ userId, onNavigate
       <div className="bg-navy-900 border border-navy-800 rounded-2xl p-5 shadow-xl">
         <div className="flex items-center gap-2 mb-4">
           <History className="w-5 h-5 text-brand-cyan" />
-          <h3 className="text-base font-bold text-white">Simulated Brokerage Orders</h3>
+          <h3 className="text-base font-bold text-white">Simulated Brokerage Orders (T+1 Settlement)</h3>
         </div>
 
         {!orders.length ? (

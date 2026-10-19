@@ -9,9 +9,12 @@ import { ApprovalsView } from './components/ApprovalsView';
 import { MandateView } from './components/MandateView';
 import { AuditView } from './components/AuditView';
 import { DemoControls } from './components/DemoControls';
+import { SecurityView } from './components/SecurityView';
+import { GuidedTourModal } from './components/GuidedTourModal';
 import {
   MessageSquare,
   ShieldCheck,
+  ShieldAlert,
   Layers,
   Compass,
   Wallet,
@@ -21,17 +24,24 @@ import {
   User,
   Info,
   CheckCircle,
-  ExternalLink
+  ExternalLink,
+  PlayCircle,
+  Flame,
+  Clock,
+  Sparkles
 } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'chat' | 'profile' | 'products' | 'plan' | 'portfolio' | 'approvals' | 'mandate' | 'audit'>('chat');
+  const [activeTab, setActiveTab] = useState<
+    'chat' | 'profile' | 'products' | 'plan' | 'portfolio' | 'approvals' | 'mandate' | 'audit' | 'security'
+  >('chat');
   const [userId, setUserId] = useState<'priya' | 'chen'>('priya');
   const [userProfile, setUserProfile] = useState<RiskProfile | null>(null);
   const [portfolio, setPortfolio] = useState<IPortfolioView | null>(null);
   const [currentDay, setCurrentDay] = useState<number>(0);
   const [currentScenario, setCurrentScenario] = useState<string>('normal');
   const [pendingApprovalsCount, setPendingApprovalsCount] = useState<number>(0);
+  const [isTourOpen, setIsTourOpen] = useState<boolean>(false);
 
   useEffect(() => {
     loadUserData();
@@ -68,17 +78,33 @@ export default function App() {
     { id: 'portfolio', label: 'Portfolio & Sandbox', icon: Wallet },
     { id: 'approvals', label: 'L3 Approvals', icon: KeyRound, badge: pendingApprovalsCount > 0 ? String(pendingApprovalsCount) : undefined },
     { id: 'mandate', label: 'Mandate Envelope', icon: FileSignature },
+    { id: 'security', label: 'Red-Team Security', icon: ShieldAlert, badge: '10 Tests' },
     { id: 'audit', label: 'Audit Trail', icon: Terminal }
   ];
 
   return (
     <div className="min-h-screen flex flex-col bg-navy-950 text-slate-100 font-sans selection:bg-brand-cyan/20 selection:text-brand-cyan">
       {/* Permanent Regulatory Compliance Banner */}
-      <header className="bg-gradient-to-r from-navy-900 via-navy-850 to-navy-900 border-b border-navy-800 text-[11px] py-1.5 px-4 text-center flex items-center justify-center gap-2 text-slate-400">
-        <Info className="w-3.5 h-3.5 text-brand-cyan shrink-0" />
-        <span>
-          <strong className="text-slate-200">Simulated Brokerage Environment:</strong> No real capital involved. Not licensed financial advice. Evaluated for 2026 Shenzhen FinTechathon Topic B.
-        </span>
+      <header className="bg-gradient-to-r from-navy-900 via-navy-850 to-navy-900 border-b border-navy-800 text-[11px] py-2 px-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-slate-400">
+        <div className="flex items-center gap-2">
+          <Info className="w-3.5 h-3.5 text-brand-cyan shrink-0" />
+          <span>
+            <strong className="text-slate-200">Simulated Brokerage Environment:</strong> Evaluated for 2026 Shenzhen FinTechathon Topic B (AI as a Financial Participant).
+          </span>
+        </div>
+
+        {/* Live System Pills */}
+        <div className="flex items-center gap-2 text-[10px] font-mono">
+          <span className="px-2 py-0.5 rounded bg-navy-950 border border-navy-800 text-brand-cyan">
+            GATE: ACTIVE (S1-S7)
+          </span>
+          <span className="px-2 py-0.5 rounded bg-navy-950 border border-navy-800 text-emerald-400">
+            AUDIT: SHA-256
+          </span>
+          <span className="px-2 py-0.5 rounded bg-navy-950 border border-navy-800 text-slate-300">
+            DAY {currentDay} • {currentScenario.toUpperCase()}
+          </span>
+        </div>
       </header>
 
       {/* Main Workspace */}
@@ -87,7 +113,7 @@ export default function App() {
         <aside className="w-full md:w-64 bg-navy-900 border-r border-navy-800 flex flex-col justify-between shrink-0">
           <div>
             {/* Logo and Brand */}
-            <div className="p-5 border-b border-navy-800 flex items-center justify-between">
+            <div className="p-4 border-b border-navy-800 flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2">
                   <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-brand-cyan to-blue-600 flex items-center justify-center text-navy-950 font-black text-xs shadow-md shadow-brand-cyan/20">
@@ -97,6 +123,17 @@ export default function App() {
                 </div>
                 <span className="text-[10px] font-mono text-slate-400 block mt-0.5">Topic B • AI Wealth Participant</span>
               </div>
+            </div>
+
+            {/* Quick 4-Min Demo Tour Trigger Button */}
+            <div className="p-3 border-b border-navy-800 bg-navy-950/70">
+              <button
+                onClick={() => setIsTourOpen(true)}
+                className="w-full py-2 px-3 bg-gradient-to-r from-blue-600 via-indigo-600 to-brand-cyan hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2 transition"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
+                <span>Guided 4-Min Pitch Tour</span>
+              </button>
             </div>
 
             {/* Persona Switcher */}
@@ -155,6 +192,8 @@ export default function App() {
                         className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
                           item.badge === 'New'
                             ? 'bg-brand-cyan/20 text-brand-cyan font-bold'
+                            : item.id === 'security'
+                            ? 'bg-rose-500/20 text-rose-300 font-bold border border-rose-500/30'
                             : item.id === 'approvals'
                             ? 'bg-amber-400 text-navy-950 font-bold'
                             : 'bg-navy-800 text-slate-300'
@@ -231,12 +270,25 @@ export default function App() {
             {activeTab === 'mandate' && (
               <MandateView userId={userId} />
             )}
+            {activeTab === 'security' && (
+              <SecurityView userId={userId} />
+            )}
             {activeTab === 'audit' && (
               <AuditView />
             )}
           </div>
         </main>
       </div>
+
+      {/* Guided 4-Minute Presentation Tour Modal */}
+      <GuidedTourModal
+        isOpen={isTourOpen}
+        onClose={() => setIsTourOpen(false)}
+        onNavigate={(tab, persona) => {
+          if (persona) setUserId(persona);
+          setActiveTab(tab as any);
+        }}
+      />
     </div>
   );
 }

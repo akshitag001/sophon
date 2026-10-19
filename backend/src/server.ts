@@ -12,6 +12,7 @@ import { planRouter } from './routes/plan';
 import { portfolioRouter } from './routes/portfolio';
 import { agentRouter } from './routes/agent';
 import { auditRouter } from './routes/audit';
+import { securityRouter } from './routes/security';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -40,6 +41,7 @@ app.use('/plan', planRouter);
 app.use('/portfolio', portfolioRouter);
 app.use('/agent', agentRouter);
 app.use('/audit', auditRouter);
+app.use('/security', securityRouter);
 app.use('/', portfolioRouter); // mount sandbox routes directly at /sandbox/advance etc.
 
 // Static frontend serving for single container deployment
@@ -53,7 +55,7 @@ for (const distPath of candidateDistPaths) {
   if (fs.existsSync(distPath)) {
     app.use(express.static(distPath));
     app.get('*', (req: Request, res: Response, next: NextFunction) => {
-      if (req.path.startsWith('/api') || req.path.startsWith('/profile') || req.path.startsWith('/products') || req.path.startsWith('/portfolio') || req.path.startsWith('/plan') || req.path.startsWith('/agent') || req.path.startsWith('/audit') || req.path.startsWith('/sandbox')) {
+      if (req.path.startsWith('/api') || req.path.startsWith('/profile') || req.path.startsWith('/products') || req.path.startsWith('/portfolio') || req.path.startsWith('/plan') || req.path.startsWith('/agent') || req.path.startsWith('/audit') || req.path.startsWith('/sandbox') || req.path.startsWith('/security')) {
         return next();
       }
       res.sendFile(path.join(distPath, 'index.html'));
