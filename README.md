@@ -1,171 +1,194 @@
-# XyraFin Advisor 🚀
+# XyraFin
 
-> **AI Wealth Advisory Agent for First-Time Investors: Risk Profiling, Asset Allocation, and Simulated Sandbox Execution**
-
-[![FinTechathon 2026](https://img.shields.io/badge/FinTechathon_2026-Topic_B:_AI_Wealth_Assistant-00D4FF?style=for-the-badge)](https://fintechathon.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
-[![Tests: 57 Passed](https://img.shields.io/badge/Tests-57%20Passed-10B981?style=for-the-badge)](backend/tests)
-[![Audit Chain](https://img.shields.io/badge/Audit_Chain-SHA--256_Verified-teal?style=for-the-badge)](evidence/chain_verify.txt)
-[![Status: Works Offline](https://img.shields.io/badge/Offline_Mode-Zero_API_Key_Required-amber?style=for-the-badge)](#quick-start)
+**Autonomous AI Wealth Advisory Participant**  
+*2026 Shenzhen International FinTechathon — Topic B: AI Wealth Assistant*
 
 ---
 
-## 💡 The Problem
+## Executive Summary
 
-Young, first-time retail investors (such as our demo persona **Priya, 24**, saving for a home deposit in 6 years) face a frustrating financial landscape:
-1. **Conflicted, High-Fee Human Advice:** Complex jargon and high sales commissions.
-2. **Opaque Black-Box Robo-Advisers:** Rigid questionnaire scoring with zero conversational explanation and no user control over agent autonomy.
-3. **Unregulated Generative AI Chatbots:** Chatbots that hallucinate speculative returns, ignore MiFID II / SFC regulatory suitability, and lack permission boundaries to actually execute tasks.
+XyraFin is an autonomous AI wealth advisory assistant designed for first-time retail investors. Built specifically for the 2026 Shenzhen International FinTechathon (Topic B: AI Wealth Assistant), the system addresses the competition theme: **"AI as a Financial Participant"**.
 
----
+Unlike conventional conversational chatbots that only answer questions, or traditional robo-advisors that rely on opaque scoring algorithms, XyraFin actively acts as an authorized financial participant. It places simulated orders, monitors asset allocation drift, and executes portfolio rebalancing within pre-signed mandate boundaries.
 
-## ✨ The Solution: "AI as a Financial Participant"
-
-XyraFin Advisor bridges the gap between conversational intelligence and regulated financial execution through three core pillars:
-
-1. **Code Computes, the Model Explains:**  
-   Risk scores, suitability gates (S1–S7), 10-year fee drag, Sharpe ratios, glide paths, and 5,000-path Monte Carlo simulations are computed exclusively by deterministic TypeScript algorithms. The LLM only explains verified tool results and never invents numbers.
-2. **Hard Suitability Gate & Bounded Autonomy (Tiers L0–L3):**  
-   The agent can never recommend or purchase an unsuitable product (e.g., a Risk 5 Leveraged Fund is strictly blocked in code by Rule S1). The user signs a cryptographically bound Investment Mandate with hard per-order and monthly limits. Trades exceeding limits require explicit human confirmation with a 6-digit PIN.
-3. **Append-Only Cryptographic Audit Log:**  
-   Every state change, tool call, policy evaluation, and order is logged in a hash-chained SQLite table protected by database triggers. Any database tampering is instantly detected via `verifyChain()`.
+The architecture enforces a strict non-negotiable rule: **"Code computes, the model explains."** All risk assessments, suitability checks, fee drags, asset allocations, and Monte Carlo projections are computed by deterministic TypeScript algorithms. The large language model operates strictly as an explainer and tool orchestrator, preventing hallucinations and regulatory non-compliance.
 
 ---
 
-## 📸 System Architecture & Dashboard Preview
+## Visual Previews
 
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│                        XyraFin Wealth Advisor                          │
-│  [SIMULATED BROKERAGE SANDBOX: NO REAL MONEY • NOT FINANCIAL ADVICE]   │
-├───────────────────────────────┬────────────────────────────────────────┤
-│          Advisor Chat         │       Live Agent Decision Feed         │
-│                               │                                        │
-│ Priya: Invest $2,000 in       │ tool::place_order({amount: 2000})      │
-│        Balanced 60/40 fund    │ ┌────────────────────────────────────┐ │
-│                               │ │ Tier: L2 | Decision: ALLOWED       │ │
-│ Agent: Queued order for       │ │ Rule: L2_MANDATE_PASSED            │ │
-│        $2,000. Settle T+1.    │ └────────────────────────────────────┘ │
-│                               │                                        │
-│ Priya: Put $10,000 in it now  │ tool::place_order({amount: 10000})     │
-│                               │ ┌────────────────────────────────────┐ │
-│ Agent: Order exceeds mandate! │ │ Tier: L3 | Decision: NEEDS_APPROVAL│ │
-│        Created proposal       │ │ Rule: MANDATE_ORDER_LIMIT_EXCEEDED │ │
-│        for PIN approval.      │ └────────────────────────────────────┘ │
-└───────────────────────────────┴────────────────────────────────────────┘
-```
+### Swiss-Style Editorial Interface & Typographic Echo Stack
+![XyraFin Editorial Hero](docs/assets/xyrafin-hero.png)
+
+### Asymmetrical Showcase Grid & Architecture
+![XyraFin Showcase Grid](docs/assets/xyrafin-showcase.png)
+
+### Autonomous Advisor Chat & Live Audited Decision Chain
+![XyraFin Advisor Chat](docs/assets/xyrafin-advisor.png)
+
+### 5,000-Path Monte Carlo Simulation & Target Allocation
+![XyraFin Monte Carlo Engine](docs/assets/xyrafin-montecarlo.png)
 
 ---
 
-## ⚡ Quick Start (Zero API Key Needed!)
+## Core Architectural Principles
 
-XyraFin runs **completely offline** with a deterministic state machine and intent router out-of-the-box. An optional OpenAI/DeepSeek API key can be set in `.env` if desired.
+### 1. Code Computes, the Model Explains
+- Risk scores, MiFID II suitability matrices (S1 through S7), 10-year fee drags, Sharpe ratios, and Monte Carlo fan-chart percentiles are computed deterministically in code.
+- The language model selects tool calls based on user intent and translates structured results into natural language. It is prohibited from generating or modifying numerical calculations.
 
-### 1. Setup & Installation
-```bash
-# Clone the repository
-git clone https://github.com/your-org/XyraFin.git
-cd XyraFin
+### 2. Hard Suitability Gate (MiFID II / FINRA Compliant)
+- Suitability is a hard algorithmic gate, not a prompt instruction.
+- The system prevents the agent from recommending, quoting, or purchasing any asset whose risk rating exceeds the investor's approved suitability level (Rule S1).
+- Risk profiling includes contradiction detection and caps the risk profile at the minimum of objective financial capacity and psychological loss tolerance.
 
-# Install backend, frontend, and concurrent dev dependencies in one step
-npm run setup
-```
+### 3. Bounded Autonomy: Four Permission Tiers
 
-### 2. Seed the Sandbox Database
-```bash
-# Initializes SQLite database, sets up clock, Priya ($20k cash), and Chen (drift demo)
-npm run seed
-```
+| Tier | Classification | Permitted Actions | Enforcement Mechanism |
+| :--- | :--- | :--- | :--- |
+| **Tier L0** | Read Only | View portfolio balances, inspect market prices, parse fund documentation. | Standard read access. |
+| **Tier L1** | Advisory | Recommend allocations, calculate fee impacts, project retirement and savings timelines. | Computational tools without execution authority. |
+| **Tier L2** | Autonomous Mandate | Execute simulated buy/sell orders, rebalance portfolios within signed mandate envelopes (e.g., maximum $2,000 per order, $3,000 per month, maximum 5% drift). | Cryptographically bound client mandate. |
+| **Tier L3** | Human Authorization | High-value trades exceeding mandate caps (e.g., $10,000 allocation). Order is held in escrow until authenticated. | Exact dollar amount verification and 6-digit cryptographic PIN confirmation. |
 
-### 3. Launch Development Server
-```bash
-# Starts Express backend (:8787) and Vite frontend (:5173) concurrently
-npm run dev
-```
-Open **[http://localhost:5173](http://localhost:5173)** in your browser.
+*The agent cannot elevate its own permission tier or alter client mandate limits under any circumstances.*
 
-*(Optional)* To connect a live LLM provider, copy `.env.example` to `.env` in the backend folder and set `LLM_API_KEY=your_key` (`LLM_BASE_URL` defaults to DeepSeek).
+### 4. Cryptographic Audit Trail
+- Every user input, tool execution, suitability evaluation, order placement, and system event is recorded in an append-only, SHA-256 hash-chained database.
+- Integrity can be verified programmatically via hash-chain recomputation (`verifyChain()`), providing tamper-evident audit evidence for compliance bodies.
 
----
-
-## 🧪 Testing & Execution Evidence
-
-### Run the Vitest Test Suite (57 Tests across 9 Suites)
-```bash
-npm test
-```
-Includes unit tests for risk scoring, suitability rules (S1–S7), Monte Carlo determinism, fee math, and **10 adversarial Red-Team cases** (prompt injection, mandate escalation, approval replay, tamper protection, and database integrity).
-
-### Run Execution Evidence Generator
-```bash
-npm run evidence
-```
-Runs the full end-to-end sandbox lifecycle (profiling $\to$ fund comparison $\to$ suitability block $\to$ Monte Carlo $\to$ mandate signing $\to$ L2 order $\to$ L3 PIN approval $\to$ crash rebalancing $\to$ audit chain validation) and regenerates:
-- `evidence/operation_log.jsonl` (raw audit export)
-- `evidence/chain_verify.txt` (cryptographic proof report)
-- `evidence/summary.md` (human-readable execution timeline table)
+### 5. Deterministic Offline Mode
+- Full support for both live LLM APIs (OpenAI, DeepSeek, or any OpenAI-compatible endpoint) and a deterministic fallback engine.
+- Demonstrations and tests can run completely offline without external network dependencies or API keys.
 
 ---
 
-## 📂 Repository Map
+## System Capabilities
+
+### 1. Risk Profiling with Contradiction Detection
+- 10-question regulatory suitability questionnaire evaluating horizon, liquidity requirements, net worth, income stability, and psychological risk tolerance.
+- Automated detection of contradictory responses (e.g., selecting aggressive equity accumulation during market drops while simultaneously demanding zero capital loss).
+- Conservative risk level assignment: `min(Objective Capacity, Psychological Tolerance)`.
+
+### 2. Fund Comparison and Fee Drag Modeling
+- Standardized product factsheets covering Money Market instruments, Government Bond indices, Balanced 60/40 strategies, Global Equities, and 3x Leveraged Equities.
+- Deterministic 10-year, 20-year, and 30-year fee drag projection comparing expense ratios (e.g., 0.15% passive index vs. 1.80% active retail fund).
+- Algorithmic calculation of annualized volatility, Sharpe ratio, and maximum drawdown.
+
+### 3. 5,000-Path Monte Carlo Engine
+- High-performance implementation of the Box-Muller transform for Gaussian random walk simulations.
+- Generates 5,000 simulated portfolio trajectories over the specified investment horizon.
+- Produces conservative 10th percentile (P10 floor), 50th percentile (P50 median), and 90th percentile (P90 ceiling) trajectories.
+- Back-solves required monthly savings to achieve target goals (such as a $30,000 first-home deposit in 6 years) with 75% or greater statistical confidence.
+
+### 4. Simulated Brokerage Sandbox
+- Simulated market clock with advanceable settlement days (T+1 cash settlement cycles).
+- Asset pricing engine supporting custom macro scenarios (Normal, Bull Run, Severe Crash -25%, High Inflation).
+- Automated drift detection flagging asset weights exceeding plus or minus 5% of strategic target, generating compliant rebalancing orders within Tier L2 envelopes.
+
+### 5. Multi-Layer Security and Adversarial Defenses
+- Isolated XML envelope parsing for untrusted data input.
+- Malicious factsheet quarantine preventing prompt injection from third-party documents.
+- 10-scenario automated Red-Team test suite verifying defense against direct prompt injection, roleplay jailbreaks, administrative override attempts, and data exfiltration.
+
+---
+
+## Technical Stack
+
+- **Backend**: Node.js, Express, TypeScript, Zod (runtime schema validation), `better-sqlite3` (single-file SQLite database with write-ahead logging).
+- **Frontend**: React 18, Vite, TypeScript, Tailwind CSS, Lucide icons, Recharts.
+- **Testing**: Vitest (57 unit and integration tests covering risk gates, suitability checks, mandate envelopes, Monte Carlo mathematics, and hash-chain audit logging).
+- **Design System**: Monochromatic Swiss-style editorial layout utilizing Clash Display (bold geometric sans-serif) and Satoshi (body sans-serif), with 700ms cubic-bezier transition states.
+
+---
+
+## Project Structure
 
 ```
-XyraFin/
+XyraFin-main/
 ├── backend/
 │   ├── src/
-│   │   ├── agent/           # LLM client, 11 tools, system prompt, output guard, offline router
-│   │   ├── domain/          # Pure deterministic finance: risk, catalog, suitability, allocation, projection
-│   │   ├── sandbox/         # Broker simulator: accounts, holdings, orders, clock, scenarios
-│   │   ├── security/        # Permissions (L0-L3), mandate, injection defense, audit chain
-│   │   ├── routes/          # Express API routes (profile, products, plan, portfolio, agent, audit)
-│   │   ├── data/            # Simulated fund catalog (12 products including Risk 5 fund)
-│   │   ├── config.ts        # Zod environment variable parsing
-│   │   ├── db.ts            # better-sqlite3 with append-only triggers
-│   │   └── server.ts        # Express app and static asset server
-│   ├── scripts/             # seed.ts, evidence.ts
-│   └── tests/               # 9 test suites: unit, security, and red-team tests
+│   │   ├── agent/            # Tool definitions, prompt builders, deterministic fallback
+│   │   ├── audit/            # Append-only SHA-256 hash-chain implementation
+│   │   ├── compliance/       # S1-S7 MiFID II / FINRA suitability validation rules
+│   │   ├── db/               # SQLite connection, schema migrations, seed fixtures
+│   │   ├── engine/           # Monte Carlo simulator, fee drag, drift monitor
+│   │   ├── mandate/          # Tier L0-L3 permission envelope enforcement
+│   │   ├── sandbox/          # Simulated exchange, clock, T+1 settlement
+│   │   ├── security/         # Factsheet quarantine, prompt injection scanner
+│   │   └── server.ts         # Express REST API routes and handlers
+│   ├── tests/                # 57 passing unit and integration test specs
+│   └── package.json
 ├── frontend/
 │   ├── src/
-│   │   ├── api/             # Typed API client
-│   │   ├── components/      # 8 screens: Chat, Risk, Products, Plan, Portfolio, Approvals, Mandate, Audit
-│   │   ├── App.tsx          # Main SPA with left sidebar navigation
-│   │   └── index.css        # Tailwind CSS design system (Dark navy aesthetic)
-│   └── vite.config.ts       # Vite configuration with API proxy
+│   │   ├── components/       # Advisor chat, suitability gates, Monte Carlo, sandbox
+│   │   ├── api/              # Strongly typed REST client
+│   │   ├── App.tsx           # Sticky navigation, routing, persona switcher
+│   │   └── index.css         # Swiss typography, tokens, micro-interaction transitions
+│   ├── public/assets/        # High-resolution architectural editorial assets
+│   ├── tailwind.config.js    # Custom typography, font scales, neutral palettes
+│   └── package.json
 ├── docs/
-│   ├── TECHNICAL_DOCUMENTATION.md   # Mathematical formulas, sequence flows, API reference
-│   ├── SECURITY_SELF_ASSESSMENT.md  # Permission tiers, STRIDE threat model, OWASP LLM mapping
-│   ├── DEMO_SCRIPT.md               # 4-minute demo narration & click-by-click script
-│   └── DECK_OUTLINE.md              # 10-slide competition presentation deck outline
-├── evidence/                # Generated execution logs, verification report, summary table
-├── archive/smart-contracts/ # Legacy prototype smart contracts (archived; not part of submission)
-├── Dockerfile               # Multi-stage single-container production build
-└── package.json             # Root workspace scripts (setup, dev, test, seed, evidence)
+│   ├── assets/               # Dashboard screenshots and architecture graphics
+│   └── DEMO_SCRIPT.md        # 4-minute step-by-step presentation script
+├── XyraFin_TopicB_IDE_Prompts.md
+└── README.md
 ```
 
 ---
 
-## 🏆 Alignment with FinTechathon Judging Criteria
+## Quick Start Guide
 
-| Criterion | Weight | How XyraFin Excels | Proving Evidence |
-|---|---|---|---|
-| **Task Completion** | **40%** | Full lifecycle: 10-question risk profiling, side-by-side fund comparison with 10-yr fee drag, 5,000-path Monte Carlo projection, bounded autonomous orders, T+1 settlement, and crash rebalancing. | `evidence/summary.md` (13 verified events) |
-| **Security & Compliance** | **30%** | Hard Suitability Gate (S1–S7) in code; Tier L0–L3 permissions; tamper-proof signed mandates; prompt-injection detection; output guard for hallucinated numbers; hash-chained audit log with SQLite immutability triggers. | `docs/SECURITY_SELF_ASSESSMENT.md` (10/10 Red-Team tests passing) |
-| **Innovation & Interaction** | **30%** | True "Financial Participant" paradigm; live Agent Decision Chain cards showing tier and rule IDs in real time; dual-mode execution (works offline without API keys or connects to DeepSeek); single-use PIN approval workflow. | Frontend UI (8 interactive screens) |
+### Prerequisites
+- Node.js version 20 or higher
+- npm or yarn
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/akshitag001/xyrafin.git
+cd xyrafin
+```
+
+### 2. Backend Setup
+```bash
+cd backend
+npm install
+npm test          # Verify all 57 tests pass
+npm run dev       # Starts REST API on http://localhost:8787
+```
+
+### 3. Frontend Setup
+In a new terminal window:
+```bash
+cd frontend
+npm install
+npm run dev       # Starts development server on http://localhost:5173
+```
+
+Open `http://localhost:5173` in your browser to interact with the application.
+
+### Optional: LLM Configuration
+By default, XyraFin operates in deterministic offline mode with zero configuration. To connect a live LLM endpoint, set the following environment variables in `backend/.env`:
+
+```env
+LLM_BASE_URL=https://api.deepseek.com/v1
+LLM_API_KEY=your_api_key_here
+LLM_MODEL=deepseek-chat
+```
 
 ---
 
-## ⚠️ Transparent Limitations
+## Verification & Compliance Evidence
 
-- **Simulated Market Environment:** Asset prices evolve under geometric Brownian motion rather than real-time order books with liquidity slippage.
-- **Rule-Based Injection Filter:** Regex pattern matching can be bypassed by advanced zero-day obfuscations; production requires semantic embedding filters.
-- **Single-Node SQLite:** Optimized for local reproducible judging; production requires distributed PostgreSQL and HSM-backed key management.
-- **PIN-Based Approval:** 6-digit confirmation PIN is designed for hackathon demonstration; production requires WebAuthn / FIDO2 biometric authentication.
+To verify the cryptographic integrity of the append-only audit log:
+```bash
+cd backend
+npm run verify-chain
+```
+This recomputes every SHA-256 block hash from the genesis block through the latest order, confirming zero database tampering.
 
 ---
 
-## 👥 Competition Team
+## License
 
-**Team XyraFin**  
-2026 Shenzhen International FinTech Competition (FinTechathon)  
-International Track — Topic B: AI Wealth Assistant  
-*Submission Deadline: 20 October 2026, 23:59 Beijing Time (UTC+8)*
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.

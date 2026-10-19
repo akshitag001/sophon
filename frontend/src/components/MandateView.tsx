@@ -7,8 +7,7 @@ import {
   Lock,
   Sliders,
   Moon,
-  Clock,
-  Sparkles
+  Clock
 } from 'lucide-react';
 
 interface MandateViewProps {
@@ -29,7 +28,6 @@ export const MandateView: React.FC<MandateViewProps> = ({ userId }) => {
   const [message, setMessage] = useState<string>('');
 
   const handleSign = () => {
-    // Deterministic simulated hash for client display
     const raw = `${userId}|${maxPerOrder}|${maxPerMonth}|${autoRebalance}|${driftThreshold}`;
     const hash = Array.from(raw).reduce((acc, char) => (acc * 31 + char.charCodeAt(0)) >>> 0, 12345).toString(16).padStart(64, 'a');
 
@@ -40,23 +38,25 @@ export const MandateView: React.FC<MandateViewProps> = ({ userId }) => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      <div className="bg-navy-900 border border-navy-800 p-6 rounded-2xl shadow-xl">
-        <div className="flex items-center gap-2 mb-2">
-          <FileSignature className="w-5 h-5 text-brand-cyan" />
-          <h2 className="text-xl font-bold text-white">Investment Mandate (Agent Permission Envelope)</h2>
+    <div className="max-w-2xl mx-auto space-y-6 font-sans">
+      <div className="bg-white border border-[#1e1e1e]/10 p-6 rounded-sm shadow-sm">
+        <div className="flex items-center gap-2 mb-1.5">
+          <FileSignature className="w-4 h-4 text-[#111111]" />
+          <h2 className="text-sm font-clash font-bold text-[#111111]">
+            Investment Mandate (Agent Permission Envelope)
+          </h2>
         </div>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-[#838282] font-satoshi font-medium leading-relaxed">
           The investment mandate defines the hard parameters inside which the agent operates autonomously under Tier L2.
           Any trade exceeding these limits automatically escalates to Tier L3 human authorization.
         </p>
       </div>
 
       {/* Mandate Form */}
-      <div className="bg-navy-900 border border-navy-800 rounded-2xl p-6 shadow-xl space-y-5">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <div className="bg-white border border-[#1e1e1e]/10 rounded-sm p-6 shadow-sm space-y-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="text-xs font-semibold text-slate-300 block mb-1.5">
+            <label className="text-xs font-semibold text-[#111111] block mb-1">
               Maximum Capital per Single Order ($)
             </label>
             <input
@@ -66,13 +66,13 @@ export const MandateView: React.FC<MandateViewProps> = ({ userId }) => {
                 setMaxPerOrder(Number(e.target.value));
                 setSigned(false);
               }}
-              className="w-full bg-navy-950 border border-navy-700 text-white rounded-xl px-4 py-2.5 text-sm font-mono focus:border-brand-cyan focus:outline-none"
+              className="w-full bg-[#f2f2f2] border border-[#1e1e1e]/15 text-[#111111] rounded-sm px-3.5 py-2 text-xs font-mono focus:border-[#111111] focus:outline-none"
             />
-            <span className="text-[10px] text-slate-500 mt-1 block">Orders above this require L3 PIN authorization.</span>
+            <span className="text-[10px] text-[#838282] mt-1 block">Orders above this require L3 PIN authorization.</span>
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-slate-300 block mb-1.5">
+            <label className="text-xs font-semibold text-[#111111] block mb-1">
               Maximum Cumulative Capital per Month ($)
             </label>
             <input
@@ -82,17 +82,17 @@ export const MandateView: React.FC<MandateViewProps> = ({ userId }) => {
                 setMaxPerMonth(Number(e.target.value));
                 setSigned(false);
               }}
-              className="w-full bg-navy-950 border border-navy-700 text-white rounded-xl px-4 py-2.5 text-sm font-mono focus:border-brand-cyan focus:outline-none"
+              className="w-full bg-[#f2f2f2] border border-[#1e1e1e]/15 text-[#111111] rounded-sm px-3.5 py-2 text-xs font-mono focus:border-[#111111] focus:outline-none"
             />
-            <span className="text-[10px] text-slate-500 mt-1 block">Monthly automated investment ceiling.</span>
+            <span className="text-[10px] text-[#838282] mt-1 block">Monthly automated investment ceiling.</span>
           </div>
         </div>
 
         {/* Drift Threshold & Rebalancing */}
-        <div className="pt-4 border-t border-navy-800 grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div className="pt-4 border-t border-[#1e1e1e]/10 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="text-xs font-semibold text-slate-300 block mb-1.5">
-              Portfolio Drift Threshold: {(driftThreshold * 100).toFixed(0)}%
+            <label className="text-xs font-semibold text-[#111111] block mb-1">
+              Portfolio Drift Threshold: <span className="font-mono text-[#111111]">{(driftThreshold * 100).toFixed(0)}%</span>
             </label>
             <input
               type="range"
@@ -104,17 +104,17 @@ export const MandateView: React.FC<MandateViewProps> = ({ userId }) => {
                 setDriftThreshold(Number(e.target.value));
                 setSigned(false);
               }}
-              className="w-full accent-brand-cyan"
+              className="w-full accent-[#111111] cursor-pointer"
             />
-            <span className="text-[10px] text-slate-500 mt-1 block">
+            <span className="text-[10px] text-[#838282] mt-1 block">
               Triggers automated rebalancing when asset allocation deviates past this threshold.
             </span>
           </div>
 
-          <div className="flex items-center justify-between p-4 bg-navy-950 rounded-xl border border-navy-800">
+          <div className="flex items-center justify-between p-3.5 bg-[#f2f2f2] rounded-sm border border-[#1e1e1e]/10">
             <div>
-              <span className="text-xs font-semibold text-white block">Automated Drift Rebalancing</span>
-              <span className="text-[10px] text-slate-400">Allow agent to execute rebalance trades within mandate</span>
+              <span className="text-xs font-semibold text-[#111111] block">Automated Drift Rebalancing</span>
+              <span className="text-[10px] text-[#838282]">Allow agent to execute rebalance trades within mandate</span>
             </div>
             <input
               type="checkbox"
@@ -123,60 +123,60 @@ export const MandateView: React.FC<MandateViewProps> = ({ userId }) => {
                 setAutoRebalance(e.target.checked);
                 setSigned(false);
               }}
-              className="w-5 h-5 accent-brand-cyan rounded cursor-pointer"
+              className="w-4 h-4 accent-[#111111] rounded cursor-pointer"
             />
           </div>
         </div>
 
         {/* Quiet Hours */}
-        <div className="pt-4 border-t border-navy-800 flex items-center justify-between p-4 bg-navy-950 rounded-xl border border-navy-800">
-          <div className="flex items-center gap-2">
-            <Moon className="w-4 h-4 text-brand-cyan" />
+        <div className="pt-4 border-t border-[#1e1e1e]/10 flex items-center justify-between p-3.5 bg-[#f2f2f2] rounded-sm border border-[#1e1e1e]/10">
+          <div className="flex items-center gap-2.5">
+            <Moon className="w-4 h-4 text-[#111111]" />
             <div>
-              <span className="text-xs font-semibold text-white block">Trading Quiet Hours</span>
-              <span className="text-[10px] text-slate-400">
+              <span className="text-xs font-semibold text-[#111111] block">Trading Quiet Hours</span>
+              <span className="text-[10px] text-[#838282]">
                 Autonomous orders paused between {quietHoursStart}:00 and 0{quietHoursEnd}:00.
               </span>
             </div>
           </div>
-          <span className="text-xs font-mono text-slate-300">22:00 - 07:00</span>
+          <span className="text-xs font-mono text-[#111111] bg-white border border-[#1e1e1e]/15 px-2.5 py-0.5 rounded-full font-bold">22:00 - 07:00</span>
         </div>
 
         {/* Sign Mandate Action */}
-        <div className="pt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="pt-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <button
             onClick={handleSign}
-            className="px-6 py-2.5 bg-gradient-to-r from-brand-cyan to-blue-500 text-navy-950 font-bold text-xs rounded-xl hover:opacity-90 shadow-lg shadow-brand-cyan/20 flex items-center gap-2 transition"
+            className="px-5 py-2.5 bg-[#111111] hover:bg-black text-[#f2f2f2] font-semibold text-xs rounded-full shadow-sm flex items-center gap-2 transition font-satoshi"
           >
             <FileSignature className="w-4 h-4" />
-            Sign & Cryptographically Lock Mandate
+            Sign &amp; Lock Mandate
           </button>
 
           {signed && (
-            <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-medium">
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Mandate Active & Enforced</span>
+            <div className="flex items-center gap-1.5 text-xs text-[#111111] font-semibold font-mono">
+              <CheckCircle2 className="w-4 h-4 text-[#111111]" />
+              <span>Mandate Active &amp; Enforced</span>
             </div>
           )}
         </div>
 
         {message && (
-          <div className="p-3 bg-brand-cyan/10 border border-brand-cyan/30 rounded-xl text-xs text-brand-cyan">
+          <div className="p-3 bg-[#f2f2f2] border border-[#1e1e1e]/15 rounded-sm text-xs text-[#111111] font-mono">
             {message}
           </div>
         )}
 
         {/* Signed Hash Evidence Box */}
         {signed && (
-          <div className="mt-4 p-4 bg-navy-950 border border-navy-800 rounded-xl space-y-2">
-            <div className="flex items-center justify-between text-xs font-mono">
-              <span className="text-slate-400">Cryptographic Mandate Hash (SHA-256):</span>
-              <span className="text-[11px] text-slate-500">Signed: {new Date(signedAt).toLocaleDateString()}</span>
+          <div className="mt-4 p-4 bg-[#f2f2f2] border border-[#1e1e1e]/10 rounded-sm space-y-2 font-mono">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-[#111111] font-bold">Cryptographic Mandate Hash (SHA-256):</span>
+              <span className="text-[11px] text-[#838282]">Signed: {new Date(signedAt).toLocaleDateString()}</span>
             </div>
-            <p className="text-xs font-mono text-brand-cyan break-all bg-navy-900 p-2.5 rounded-lg border border-navy-800">
+            <p className="text-xs text-[#111111] break-all bg-white p-3 rounded-sm border border-[#1e1e1e]/10 font-bold">
               {signedHash}
             </p>
-            <p className="text-[10px] text-slate-500">
+            <p className="text-[10px] text-[#838282] font-satoshi">
               Security Guarantee: Any modification attempt by the AI Agent is strictly blocked (DENIED) by the permissions policy engine.
             </p>
           </div>

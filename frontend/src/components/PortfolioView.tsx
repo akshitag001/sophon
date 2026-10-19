@@ -10,7 +10,6 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   CheckCircle2,
-  PieChart,
   Scale
 } from 'lucide-react';
 
@@ -60,14 +59,18 @@ export const PortfolioView: React.FC<PortfolioViewProps> = ({ userId, onNavigate
   };
 
   if (loading && !portfolio) {
-    return <div className="p-8 text-center text-slate-400">Loading simulated portfolio & holdings...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center py-24 space-y-3 font-sans">
+        <div className="w-8 h-8 border-2 border-[#111111] border-t-transparent rounded-full animate-spin" />
+        <p className="text-xs font-mono text-[#838282]">Loading portfolio &amp; positions...</p>
+      </div>
+    );
   }
 
   const totalValue = portfolio?.totalPortfolioValue || 0;
   const cash = portfolio?.cash || 0;
   const holdingsValue = portfolio?.totalHoldingsValue || 0;
 
-  // Compute equity vs fixed income vs cash weights
   let equityValue = 0;
   let bondValue = 0;
   portfolio?.holdings.forEach((h) => {
@@ -79,44 +82,52 @@ export const PortfolioView: React.FC<PortfolioViewProps> = ({ userId, onNavigate
   const bondWeight = totalValue > 0 ? (bondValue / totalValue) * 100 : 0;
   const cashWeight = totalValue > 0 ? (cash / totalValue) * 100 : 100;
 
-  // Target for Level 2 (Chen): 35% Equity, 50% Bonds, 15% Cash
   const targetEquity = 35;
   const targetBond = 50;
   const equityDrift = equityWeight - targetEquity;
   const hasSignificantDrift = Math.abs(equityDrift) > 5;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       {/* Overview KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-navy-900 border border-navy-800 p-5 rounded-2xl shadow-xl">
-          <span className="text-xs text-slate-400 font-medium block">Total Simulated Net Worth</span>
-          <span className="text-3xl font-black text-white mt-1.5 block font-mono">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="bg-white border border-[#1e1e1e]/10 rounded-sm p-6 shadow-sm card-hover-swiss">
+          <span className="text-xs text-[#838282] font-medium block">
+            Total Simulated Net Worth
+          </span>
+          <span className="text-3xl font-clash font-bold text-[#111111] tracking-tight mt-1.5 block">
             ${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
-          <div className="flex items-center gap-2 mt-2 text-xs text-slate-400">
-            <span>Clock Day: {portfolio?.currentDay}</span>
-            <span>•</span>
-            <span className="capitalize text-brand-cyan">{portfolio?.marketScenario} Market</span>
+          <div className="flex items-center gap-2 mt-3 text-[11px] font-mono text-[#838282]">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#f2f2f2] border border-[#1e1e1e]/15 text-[#111111] font-bold">
+              DAY {portfolio?.currentDay}
+            </span>
+            <span className="capitalize text-[#111111]">
+              • {portfolio?.marketScenario} Regime
+            </span>
           </div>
         </div>
 
-        <div className="bg-navy-900 border border-navy-800 p-5 rounded-2xl shadow-xl">
-          <span className="text-xs text-slate-400 font-medium block">Simulated Cash Available</span>
-          <span className="text-3xl font-black text-emerald-400 mt-1.5 block font-mono">
+        <div className="bg-white border border-[#1e1e1e]/10 rounded-sm p-6 shadow-sm card-hover-swiss">
+          <span className="text-xs text-[#838282] font-medium block">
+            Simulated Liquid Cash
+          </span>
+          <span className="text-3xl font-clash font-bold text-[#111111] tracking-tight mt-1.5 block">
             ${cash.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
-          <span className="text-xs text-slate-400 mt-2 block">
-            {totalValue > 0 ? `${((cash / totalValue) * 100).toFixed(1)}% of total portfolio` : '100%'}
+          <span className="text-[11px] font-mono text-[#838282] mt-3 block">
+            {totalValue > 0 ? `${((cash / totalValue) * 100).toFixed(1)}% of total capital` : '100%'}
           </span>
         </div>
 
-        <div className="bg-navy-900 border border-navy-800 p-5 rounded-2xl shadow-xl">
-          <span className="text-xs text-slate-400 font-medium block">Invested Holdings Market Value</span>
-          <span className="text-3xl font-black text-brand-cyan mt-1.5 block font-mono">
+        <div className="bg-white border border-[#1e1e1e]/10 rounded-sm p-6 shadow-sm card-hover-swiss">
+          <span className="text-xs text-[#838282] font-medium block">
+            Invested Market Assets
+          </span>
+          <span className="text-3xl font-clash font-bold text-[#111111] tracking-tight mt-1.5 block">
             ${holdingsValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
-          <span className="text-xs text-slate-400 mt-2 block">
+          <span className="text-[11px] font-mono text-[#838282] mt-3 block">
             {portfolio?.holdings.length || 0} active asset positions
           </span>
         </div>
@@ -124,82 +135,90 @@ export const PortfolioView: React.FC<PortfolioViewProps> = ({ userId, onNavigate
 
       {/* Asset Allocation Drift Analysis Card */}
       {portfolio && portfolio.holdings.length > 0 && (
-        <div className="bg-navy-900 border border-navy-800 rounded-2xl p-5 shadow-xl space-y-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="bg-white border border-[#1e1e1e]/10 rounded-sm p-6 shadow-sm space-y-5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#1e1e1e]/10">
             <div>
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Scale className="w-5 h-5 text-brand-cyan" />
-                Asset Allocation & Portfolio Drift Monitor
-              </h3>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Target Weights vs Current Market Weights. Mandate tolerance band is ±5%.
+              <div className="flex items-center gap-2">
+                <Scale className="w-4 h-4 text-[#111111]" />
+                <h3 className="text-sm font-clash font-bold text-[#111111]">Asset Allocation &amp; Portfolio Drift Monitor</h3>
+              </div>
+              <p className="text-xs text-[#838282] mt-1 font-satoshi font-medium">
+                Target Model Weights vs Live Evaluated Market Weights (Mandate band: &plusmn;5%).
               </p>
             </div>
 
             <button
               onClick={handleRebalance}
               disabled={rebalancing}
-              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-brand-cyan hover:from-blue-500 hover:to-brand-cyan text-white text-xs font-bold rounded-xl transition flex items-center gap-2 shadow-lg shadow-brand-cyan/20 disabled:opacity-50"
+              className="px-4 py-2 bg-[#111111] hover:bg-black text-[#f2f2f2] text-xs font-semibold rounded-full transition flex items-center gap-2 shadow-sm disabled:opacity-50 font-satoshi"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${rebalancing ? 'animate-spin' : ''}`} />
-              <span>{rebalancing ? 'Evaluating Rebalance Orders...' : 'Generate Auto-Rebalance Orders'}</span>
+              <span>{rebalancing ? 'Evaluating...' : 'Trigger Rebalance'}</span>
             </button>
           </div>
 
-          {/* Rebalance Success Banner */}
           {rebalanceSuccessMsg && (
-            <div className="p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-xl text-xs text-emerald-200 flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+            <div className="p-4 bg-[#f2f2f2] border border-[#1e1e1e]/15 rounded-sm text-xs text-[#111111] flex items-start gap-2.5">
+              <CheckCircle2 className="w-4 h-4 text-[#111111] shrink-0 mt-0.5" />
               <div>
-                <strong className="block font-bold">Autonomous Advisor Rebalance Triggered:</strong>
-                <p className="mt-0.5 opacity-90">{rebalanceSuccessMsg}</p>
+                <strong className="block font-bold text-[#111111]">Autonomous Advisor Rebalance:</strong>
+                <p className="mt-1 text-[#838282] font-mono text-[11px] leading-relaxed">{rebalanceSuccessMsg}</p>
               </div>
             </div>
           )}
 
           {/* Allocation Drift Bars */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-            <div className="bg-navy-950 p-3.5 rounded-xl border border-navy-800 space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+            <div className="bg-[#f2f2f2] p-4 rounded-sm border border-[#1e1e1e]/10 space-y-2.5">
               <div className="flex justify-between text-xs">
-                <span className="text-slate-400 font-semibold">Equities</span>
-                <span className="font-mono text-white font-bold">{equityWeight.toFixed(1)}%</span>
+                <span className="text-[#111111] font-semibold">Equities</span>
+                <span className="font-mono text-[#111111] font-bold">{equityWeight.toFixed(1)}%</span>
               </div>
-              <div className="w-full bg-navy-850 h-2 rounded-full overflow-hidden">
-                <div className="bg-brand-cyan h-full rounded-full" style={{ width: `${Math.min(equityWeight, 100)}%` }} />
+              <div className="w-full bg-white h-2.5 rounded-full overflow-hidden border border-[#1e1e1e]/10">
+                <div
+                  className="bg-[#111111] h-full rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(equityWeight, 100)}%` }}
+                />
               </div>
-              <div className="flex justify-between text-[11px] font-mono text-slate-500">
+              <div className="flex justify-between text-[11px] font-mono text-[#838282]">
                 <span>Target: {targetEquity}%</span>
-                <span className={equityDrift > 5 ? 'text-amber-400 font-bold' : 'text-emerald-400'}>
+                <span className="text-[#111111] font-bold">
                   Drift: {equityDrift > 0 ? '+' : ''}{equityDrift.toFixed(1)}%
                 </span>
               </div>
             </div>
 
-            <div className="bg-navy-950 p-3.5 rounded-xl border border-navy-800 space-y-2">
+            <div className="bg-[#f2f2f2] p-4 rounded-sm border border-[#1e1e1e]/10 space-y-2.5">
               <div className="flex justify-between text-xs">
-                <span className="text-slate-400 font-semibold">Fixed Income / Bonds</span>
-                <span className="font-mono text-white font-bold">{bondWeight.toFixed(1)}%</span>
+                <span className="text-[#111111] font-semibold">Fixed Income / Bonds</span>
+                <span className="font-mono text-[#111111] font-bold">{bondWeight.toFixed(1)}%</span>
               </div>
-              <div className="w-full bg-navy-850 h-2 rounded-full overflow-hidden">
-                <div className="bg-blue-500 h-full rounded-full" style={{ width: `${Math.min(bondWeight, 100)}%` }} />
+              <div className="w-full bg-white h-2.5 rounded-full overflow-hidden border border-[#1e1e1e]/10">
+                <div
+                  className="bg-[#838282] h-full rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(bondWeight, 100)}%` }}
+                />
               </div>
-              <div className="flex justify-between text-[11px] font-mono text-slate-500">
+              <div className="flex justify-between text-[11px] font-mono text-[#838282]">
                 <span>Target: {targetBond}%</span>
-                <span className="text-slate-400">Drift: {(bondWeight - targetBond).toFixed(1)}%</span>
+                <span>Drift: {(bondWeight - targetBond).toFixed(1)}%</span>
               </div>
             </div>
 
-            <div className="bg-navy-950 p-3.5 rounded-xl border border-navy-800 space-y-2">
+            <div className="bg-[#f2f2f2] p-4 rounded-sm border border-[#1e1e1e]/10 space-y-2.5">
               <div className="flex justify-between text-xs">
-                <span className="text-slate-400 font-semibold">Liquid Cash</span>
-                <span className="font-mono text-white font-bold">{cashWeight.toFixed(1)}%</span>
+                <span className="text-[#111111] font-semibold">Liquid Cash Buffer</span>
+                <span className="font-mono text-[#111111] font-bold">{cashWeight.toFixed(1)}%</span>
               </div>
-              <div className="w-full bg-navy-850 h-2 rounded-full overflow-hidden">
-                <div className="bg-emerald-400 h-full rounded-full" style={{ width: `${Math.min(cashWeight, 100)}%` }} />
+              <div className="w-full bg-white h-2.5 rounded-full overflow-hidden border border-[#1e1e1e]/10">
+                <div
+                  className="bg-[#b6b5b5] h-full rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(cashWeight, 100)}%` }}
+                />
               </div>
-              <div className="flex justify-between text-[11px] font-mono text-slate-500">
+              <div className="flex justify-between text-[11px] font-mono text-[#838282]">
                 <span>Target: 15%</span>
-                <span className="text-slate-400">Buffer Active</span>
+                <span className="text-[#111111] font-semibold">Buffer Active</span>
               </div>
             </div>
           </div>
@@ -207,56 +226,52 @@ export const PortfolioView: React.FC<PortfolioViewProps> = ({ userId, onNavigate
       )}
 
       {/* Holdings Table */}
-      <div className="bg-navy-900 border border-navy-800 rounded-2xl p-5 shadow-xl">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-white border border-[#1e1e1e]/10 rounded-sm p-6 shadow-sm">
+        <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#1e1e1e]/10">
           <div className="flex items-center gap-2">
-            <Wallet className="w-5 h-5 text-brand-cyan" />
-            <h3 className="text-base font-bold text-white">Current Asset Holdings</h3>
+            <Wallet className="w-4 h-4 text-[#111111]" />
+            <h3 className="text-sm font-clash font-bold text-[#111111]">Current Asset Holdings</h3>
           </div>
         </div>
 
         {!portfolio?.holdings.length ? (
-          <div className="p-8 text-center text-slate-400 border border-dashed border-navy-800 rounded-xl">
-            <p className="text-sm">No asset holdings currently settled.</p>
-            <p className="text-xs text-slate-500 mt-1">
-              Ask the advisor to invest your cash or advance the simulation clock to settle queued orders.
+          <div className="p-8 text-center text-[#838282] border border-dashed border-[#1e1e1e]/15 rounded-sm">
+            <p className="text-xs font-mono">No asset holdings currently settled.</p>
+            <p className="text-[11px] text-[#838282] mt-1">
+              Ask the advisor in chat to execute an investment or advance the clock to settle queued orders.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-navy-950/80 text-slate-400 border-b border-navy-800 font-mono uppercase">
+            <table className="w-full text-left text-xs font-mono">
+              <thead className="bg-[#f2f2f2] text-[#838282] border-b border-[#1e1e1e]/10 uppercase text-[10px]">
                 <tr>
-                  <th className="py-3 px-4">Product</th>
-                  <th className="py-3 px-4">Asset Class</th>
-                  <th className="py-3 px-4 text-right">Units</th>
-                  <th className="py-3 px-4 text-right">Avg Cost</th>
-                  <th className="py-3 px-4 text-right">Current Price</th>
-                  <th className="py-3 px-4 text-right">Market Value</th>
-                  <th className="py-3 px-4 text-right">Unrealized P&L</th>
+                  <th className="py-3 px-3">Product</th>
+                  <th className="py-3 px-3">Asset Class</th>
+                  <th className="py-3 px-3 text-right">Units</th>
+                  <th className="py-3 px-3 text-right">Avg Cost</th>
+                  <th className="py-3 px-3 text-right">Current Price</th>
+                  <th className="py-3 px-3 text-right">Market Value</th>
+                  <th className="py-3 px-3 text-right">Unrealized P&amp;L</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-navy-800/60">
+              <tbody className="divide-y divide-[#1e1e1e]/10 font-mono">
                 {portfolio.holdings.map((h) => {
                   const isPositive = h.unrealizedPnL >= 0;
                   return (
-                    <tr key={h.productId} className="hover:bg-navy-850/50 transition">
-                      <td className="py-3.5 px-4 font-bold text-white">{h.productName}</td>
-                      <td className="py-3.5 px-4 text-slate-400 uppercase font-mono">{h.assetClass}</td>
-                      <td className="py-3.5 px-4 text-right font-mono text-slate-300">{h.units}</td>
-                      <td className="py-3.5 px-4 text-right font-mono text-slate-300">${h.avgCost.toFixed(2)}</td>
-                      <td className="py-3.5 px-4 text-right font-mono text-white font-semibold">
+                    <tr key={h.productId} className="hover:bg-[#f2f2f2]/60 transition">
+                      <td className="py-3 px-3 font-semibold text-[#111111] font-sans">{h.productName}</td>
+                      <td className="py-3 px-3 text-[#838282] uppercase text-[11px]">{h.assetClass}</td>
+                      <td className="py-3 px-3 text-right text-[#111111]">{h.units}</td>
+                      <td className="py-3 px-3 text-right text-[#838282]">${h.avgCost.toFixed(2)}</td>
+                      <td className="py-3 px-3 text-right text-[#111111] font-semibold">
                         ${h.currentPrice.toFixed(2)}
                       </td>
-                      <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-100">
+                      <td className="py-3 px-3 text-right font-bold text-[#111111]">
                         ${h.marketValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       </td>
-                      <td
-                        className={`py-3.5 px-4 text-right font-mono font-bold flex items-center justify-end gap-1 ${
-                          isPositive ? 'text-emerald-400' : 'text-rose-400'
-                        }`}
-                      >
-                        {isPositive ? <ArrowUpRight className="w-3.5 h-3.5" /> : <ArrowDownRight className="w-3.5 h-3.5" />}
+                      <td className="py-3 px-3 text-right font-semibold flex items-center justify-end gap-1 text-[#111111]">
+                        {isPositive ? <ArrowUpRight className="w-3.5 h-3.5" /> : <ArrowDownRight className="w-3.5 h-3.5 text-[#838282]" />}
                         {isPositive ? '+' : ''}${h.unrealizedPnL.toFixed(2)} ({h.unrealizedPnLPct})
                       </td>
                     </tr>
@@ -269,51 +284,43 @@ export const PortfolioView: React.FC<PortfolioViewProps> = ({ userId, onNavigate
       </div>
 
       {/* Orders History Table */}
-      <div className="bg-navy-900 border border-navy-800 rounded-2xl p-5 shadow-xl">
-        <div className="flex items-center gap-2 mb-4">
-          <History className="w-5 h-5 text-brand-cyan" />
-          <h3 className="text-base font-bold text-white">Simulated Brokerage Orders (T+1 Settlement)</h3>
+      <div className="bg-white border border-[#1e1e1e]/10 rounded-sm p-6 shadow-sm">
+        <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#1e1e1e]/10">
+          <History className="w-4 h-4 text-[#111111]" />
+          <h3 className="text-sm font-clash font-bold text-[#111111]">Simulated Brokerage Orders (T+1 Settlement)</h3>
         </div>
 
         {!orders.length ? (
-          <div className="p-6 text-center text-slate-400 text-xs">No orders recorded in sandbox yet.</div>
+          <div className="p-6 text-center text-[#838282] text-xs font-mono">No orders recorded in sandbox yet.</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-navy-950/80 text-slate-400 border-b border-navy-800 font-mono uppercase">
+            <table className="w-full text-left text-xs font-mono">
+              <thead className="bg-[#f2f2f2] text-[#838282] border-b border-[#1e1e1e]/10 uppercase text-[10px]">
                 <tr>
-                  <th className="py-2.5 px-3">Order ID</th>
-                  <th className="py-2.5 px-3">Side</th>
-                  <th className="py-2.5 px-3">Product</th>
-                  <th className="py-2.5 px-3 text-right">Amount</th>
-                  <th className="py-2.5 px-3 text-right">Fee</th>
-                  <th className="py-2.5 px-3">Exec Day</th>
-                  <th className="py-2.5 px-3">Settle Day</th>
-                  <th className="py-2.5 px-3">Status</th>
+                  <th className="py-3 px-3">Order ID</th>
+                  <th className="py-3 px-3">Side</th>
+                  <th className="py-3 px-3">Product</th>
+                  <th className="py-3 px-3 text-right">Amount</th>
+                  <th className="py-3 px-3 text-right">Fee</th>
+                  <th className="py-3 px-3">Exec Day</th>
+                  <th className="py-3 px-3">Settle Day</th>
+                  <th className="py-3 px-3">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-navy-800/60 font-mono">
+              <tbody className="divide-y divide-[#1e1e1e]/10 font-mono">
                 {orders.map((o) => (
-                  <tr key={o.id} className="hover:bg-navy-850/50 transition">
-                    <td className="py-2.5 px-3 text-slate-400">{o.id}</td>
-                    <td className="py-2.5 px-3 font-bold">
-                      <span className={o.side === 'BUY' ? 'text-emerald-400' : 'text-rose-400'}>{o.side}</span>
+                  <tr key={o.id} className="hover:bg-[#f2f2f2]/60 transition">
+                    <td className="py-3 px-3 text-[#838282]">{o.id}</td>
+                    <td className="py-3 px-3 font-bold text-[#111111]">
+                      {o.side}
                     </td>
-                    <td className="py-2.5 px-3 font-sans text-slate-200">{o.productName}</td>
-                    <td className="py-2.5 px-3 text-right text-white font-bold">${o.amount.toLocaleString()}</td>
-                    <td className="py-2.5 px-3 text-right text-slate-400">${o.fee.toFixed(2)}</td>
-                    <td className="py-2.5 px-3 text-slate-400">Day {o.executionDay}</td>
-                    <td className="py-2.5 px-3 text-slate-400">Day {o.settlementDay}</td>
-                    <td className="py-2.5 px-3 font-sans">
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                          o.status === 'settled'
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                            : o.status === 'queued'
-                            ? 'bg-amber-500/10 text-amber-300 border border-amber-500/30'
-                            : 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
-                        }`}
-                      >
+                    <td className="py-3 px-3 text-[#111111] font-sans">{o.productName}</td>
+                    <td className="py-3 px-3 text-right text-[#111111] font-bold">${o.amount.toLocaleString()}</td>
+                    <td className="py-3 px-3 text-right text-[#838282]">${o.fee.toFixed(2)}</td>
+                    <td className="py-3 px-3 text-[#838282]">Day {o.executionDay}</td>
+                    <td className="py-3 px-3 text-[#838282]">Day {o.settlementDay}</td>
+                    <td className="py-3 px-3">
+                      <span className="text-[10px] px-2.5 py-0.5 rounded-full font-mono bg-[#f2f2f2] border border-[#1e1e1e]/15 text-[#111111] font-bold">
                         {o.status.toUpperCase()}
                       </span>
                     </td>

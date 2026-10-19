@@ -4,15 +4,7 @@ import {
   X,
   ChevronRight,
   ChevronLeft,
-  Play,
-  CheckCircle2,
-  ShieldCheck,
   User,
-  Layers,
-  TrendingDown,
-  TrendingUp,
-  Terminal,
-  KeyRound,
   ExternalLink
 } from 'lucide-react';
 
@@ -107,45 +99,34 @@ export const GuidedTourModal: React.FC<GuidedTourModalProps> = ({
     {
       step: 5,
       timeMark: '2:30 - 3:00',
-      title: 'L0–L3 Permission Tiers & 4-Digit Human PIN',
+      title: 'Tier L2 vs Tier L3 Human Authorization (Mandate Enforcement)',
       tab: 'approvals',
       persona: 'priya',
-      summary: 'L0 Read, L1 Advise, L2 Act within mandate, L3 Human PIN approval for high-value orders.',
-      talkingPoint: '"Orders exceeding the client mandate generate cryptographic proposals. Execution requires typing the exact amount and entering PIN 123456."',
-      actionLabel: 'Inspect L3 Approval Queue',
+      summary: 'Automatic escalation to human PIN approval when orders exceed the signed $2,000 mandate threshold.',
+      talkingPoint: '"When an order exceeds the client-signed mandate limit, the agent cannot execute alone. It generates a single-use proposal requiring PIN authorization."',
+      actionLabel: 'Inspect Tier L3 Approval Queue',
       action: () => onNavigate('approvals', 'priya')
     },
     {
       step: 6,
       timeMark: '3:00 - 3:30',
-      title: 'Brokerage Sandbox & Market Shock Testing',
-      tab: 'portfolio',
-      persona: 'priya',
-      summary: 'Simulated clock with T+1 settlement and market stress testing (-25% Flash Crash & +15% Rally).',
-      talkingPoint: '"We test portfolio resilience under real market volatility by triggering macro shock scenarios in our sandbox broker."',
-      actionLabel: 'Open Portfolio Sandbox',
-      action: () => onNavigate('portfolio', 'priya')
-    },
-    {
-      step: 7,
-      timeMark: '3:30 - 3:50',
-      title: 'Portfolio Drift & Autonomous Rebalancing (Chen)',
+      title: 'Brokerage Sandbox, Macro Stress, & 5% Drift Rebalance',
       tab: 'portfolio',
       persona: 'chen',
-      summary: 'Meet Chen: A user with an active portfolio drifted from 60/40 target due to equity market movements.',
-      talkingPoint: '"XyraFin detects asset drift exceeding the mandate threshold (5%) and generates optimal buy/sell rebalancing orders."',
-      actionLabel: 'Switch to Chen & View Drift',
+      summary: 'Chen: Experienced persona with a drifted portfolio. Test T+1 settlement and -25% Flash Crash stress test.',
+      talkingPoint: '"Let us switch to Chen. We advance the T+1 settlement clock, simulate a -25% market shock, detect 5% asset drift, and execute rebalancing."',
+      actionLabel: 'Inspect Chen Portfolio & Drift',
       action: () => onNavigate('portfolio', 'chen')
     },
     {
-      step: 8,
-      timeMark: '3:50 - 4:15',
-      title: 'Append-Only SHA-256 Audit Chain & 10 Red-Team Tests',
+      step: 7,
+      timeMark: '3:30 - 4:00',
+      title: 'Red-Team Security & SHA-256 Append-Only Audit Chain',
       tab: 'security',
       persona: 'priya',
-      summary: 'Hash-chained audit log with SQLite immutability triggers and 10/10 adversarial security attacks passing.',
-      talkingPoint: '"Every single agent action is hashed into an append-only chain. Judges can trigger all 10 adversarial attacks with 1 click to verify live defense."',
-      actionLabel: 'Launch Red-Team Security Suite',
+      summary: 'Run 10 automated adversarial attacks against prompt injection and verify the immutable cryptographic hash chain.',
+      talkingPoint: '"To conclude: our 10-attack red-team suite proves adversarial robustness, and every state mutation is mathematically linked in an immutable SHA-256 chain."',
+      actionLabel: 'Run 10 Red-Team Attacks',
       action: () => onNavigate('security', 'priya')
     }
   ];
@@ -155,6 +136,7 @@ export const GuidedTourModal: React.FC<GuidedTourModalProps> = ({
   const handleExecuteAction = () => {
     if (current.action) {
       current.action();
+      onClose();
     }
   };
 
@@ -181,41 +163,41 @@ export const GuidedTourModal: React.FC<GuidedTourModalProps> = ({
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/80 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in font-sans"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-navy-900 border border-navy-750 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+        className="bg-white border border-[#1e1e1e]/15 w-full max-w-xl rounded-sm shadow-2xl overflow-hidden flex flex-col"
       >
         {/* Modal Header */}
-        <div className="p-4 sm:p-5 border-b border-navy-800 bg-navy-950/60 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-brand-cyan/10 border border-brand-cyan/20 rounded-xl text-brand-cyan">
-              <Compass className="w-5 h-5" />
+        <div className="p-5 border-b border-[#1e1e1e]/10 bg-[#f2f2f2] flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-[#111111] text-[#f2f2f2] rounded-sm">
+              <Compass className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                Interactive 4-Minute Hackathon Demo Tour
-                <span className="text-[10px] font-mono bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded-full border border-blue-500/30">
+              <h3 className="text-xs font-clash font-bold text-[#111111] flex items-center gap-2">
+                Interactive 4-Minute Demo Pitch
+                <span className="text-[10px] font-mono bg-white text-[#111111] px-2 py-0.5 rounded-full border border-[#1e1e1e]/15 font-bold">
                   Topic B Script
                 </span>
               </h3>
-              <p className="text-xs text-slate-400">
-                Click "Next" to auto-navigate the full system lifecycle live for judges.
+              <p className="text-[11px] text-[#838282] font-satoshi font-medium">
+                Auto-navigate the full system lifecycle live for judges.
               </p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-navy-800 transition"
+            className="p-1.5 text-[#838282] hover:text-[#111111] rounded transition"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Step Progress Tracker */}
-        <div className="px-5 pt-4 pb-2 bg-navy-900 flex items-center justify-between gap-1 overflow-x-auto">
+        <div className="px-6 pt-4 pb-2 bg-white flex items-center justify-between gap-1.5 overflow-x-auto">
           {steps.map((s, idx) => (
             <button
               key={s.step}
@@ -223,12 +205,12 @@ export const GuidedTourModal: React.FC<GuidedTourModalProps> = ({
                 setCurrentStep(idx);
                 if (s.action) s.action();
               }}
-              className={`flex-1 min-w-[32px] h-2 rounded-full transition-all ${
+              className={`flex-1 min-w-[32px] h-2 rounded-full transition-all duration-300 ${
                 idx === currentStep
-                  ? 'bg-gradient-to-r from-blue-500 to-brand-cyan'
+                  ? 'bg-[#111111]'
                   : idx < currentStep
-                  ? 'bg-blue-600/40'
-                  : 'bg-navy-800'
+                  ? 'bg-[#838282]'
+                  : 'bg-[#e5e5e5]'
               }`}
               title={`Step ${s.step}: ${s.title}`}
             />
@@ -236,34 +218,34 @@ export const GuidedTourModal: React.FC<GuidedTourModalProps> = ({
         </div>
 
         {/* Content Body */}
-        <div className="p-6 space-y-5">
+        <div className="p-6 space-y-4 bg-white">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-1 rounded-lg bg-navy-950 border border-navy-800 text-xs font-mono font-bold text-brand-cyan">
-                Step {current.step} of {steps.length}
+            <div className="flex items-center gap-2 font-mono">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#f2f2f2] border border-[#1e1e1e]/15 text-xs font-bold text-[#111111]">
+                Step {current.step} / {steps.length}
               </span>
-              <span className="text-xs font-mono text-slate-400">{current.timeMark}</span>
+              <span className="text-xs text-[#838282]">{current.timeMark}</span>
             </div>
 
             {current.persona && (
-              <span className="text-xs font-mono px-2.5 py-1 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-300 flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5" />
-                Active: {current.persona === 'priya' ? 'Priya (Retail)' : 'Chen (Drift)'}
+              <span className="text-xs font-mono px-2.5 py-0.5 rounded-full bg-[#f2f2f2] border border-[#1e1e1e]/15 text-[#111111] flex items-center gap-1.5 font-bold">
+                <User className="w-3 h-3 text-[#111111]" />
+                Persona: {current.persona === 'priya' ? 'Priya' : 'Chen'}
               </span>
             )}
           </div>
 
           <div>
-            <h4 className="text-lg font-extrabold text-white">{current.title}</h4>
-            <p className="text-xs text-slate-300 mt-1 leading-relaxed">{current.summary}</p>
+            <h4 className="text-base font-clash font-bold text-[#111111]">{current.title}</h4>
+            <p className="text-xs text-[#838282] mt-1.5 leading-relaxed font-satoshi font-medium">{current.summary}</p>
           </div>
 
           {/* Presenter Pitch Quote */}
-          <div className="bg-navy-950 p-4 rounded-xl border border-navy-800 space-y-1">
-            <span className="text-[10px] font-mono uppercase text-brand-cyan font-bold tracking-wider block">
+          <div className="bg-[#f2f2f2] p-4 rounded-sm border border-[#1e1e1e]/10 space-y-1.5">
+            <span className="text-[10px] uppercase text-[#838282] font-mono font-bold tracking-wider block">
               Suggested Presenter Narration:
             </span>
-            <p className="text-xs italic text-slate-200 leading-relaxed font-sans">
+            <p className="text-xs italic text-[#111111] leading-relaxed font-serif">
               {current.talkingPoint}
             </p>
           </div>
@@ -272,32 +254,32 @@ export const GuidedTourModal: React.FC<GuidedTourModalProps> = ({
           <div className="pt-2">
             <button
               onClick={handleExecuteAction}
-              className="w-full py-2.5 px-4 bg-navy-800 hover:bg-navy-750 text-slate-100 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border border-navy-700 hover:border-brand-cyan/50 transition shadow-md"
+              className="w-full py-2.5 px-4 bg-[#111111] hover:bg-black text-[#f2f2f2] rounded-full text-xs font-semibold flex items-center justify-center gap-2 transition shadow-sm font-satoshi"
             >
-              <ExternalLink className="w-4 h-4 text-brand-cyan" />
+              <ExternalLink className="w-3.5 h-3.5" />
               <span>{current.actionLabel}</span>
             </button>
           </div>
         </div>
 
         {/* Modal Footer Controls */}
-        <div className="p-4 bg-navy-950/80 border-t border-navy-800 flex items-center justify-between">
+        <div className="p-4 bg-[#f2f2f2] border-t border-[#1e1e1e]/10 flex items-center justify-between">
           <button
             onClick={handlePrev}
             disabled={currentStep === 0}
-            className="px-4 py-2 bg-navy-850 hover:bg-navy-800 text-slate-300 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-navy-800 disabled:opacity-40 transition"
+            className="px-4 py-2 bg-white hover:bg-[#111111] hover:text-[#f2f2f2] text-[#111111] rounded-full text-xs font-semibold flex items-center gap-1 border border-[#1e1e1e]/15 disabled:opacity-30 transition font-satoshi"
           >
-            <ChevronLeft className="w-4 h-4" />
-            <span>Previous Step</span>
+            <ChevronLeft className="w-3.5 h-3.5" />
+            <span>Previous</span>
           </button>
 
           <button
             onClick={handleNext}
             disabled={currentStep === steps.length - 1}
-            className="px-5 py-2 bg-gradient-to-r from-blue-600 to-brand-cyan hover:from-blue-500 hover:to-brand-cyan text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-brand-cyan/20 disabled:opacity-40 transition"
+            className="px-5 py-2 bg-[#111111] hover:bg-black text-[#f2f2f2] font-semibold rounded-full text-xs flex items-center gap-1 shadow-sm disabled:opacity-30 transition font-satoshi"
           >
-            <span>Next Step</span>
-            <ChevronRight className="w-4 h-4" />
+            <span>Next</span>
+            <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>

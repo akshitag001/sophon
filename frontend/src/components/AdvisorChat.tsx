@@ -4,14 +4,13 @@ import {
   Send,
   Bot,
   User,
-  Shield,
-  ShieldAlert,
-  ShieldCheck,
-  FileText,
   Upload,
   Cpu,
   ArrowRight,
-  AlertCircle
+  Terminal,
+  Zap,
+  CheckCircle2,
+  Clock
 } from 'lucide-react';
 
 interface AdvisorChatProps {
@@ -37,7 +36,7 @@ export const AdvisorChat: React.FC<AdvisorChatProps> = ({
     {
       id: 'init-1',
       sender: 'agent',
-      text: `Hello! I am XyraFin Advisor, your AI wealth assistant operating within our simulated brokerage sandbox.\n\n(Important Regulatory Notice: I am an automated simulated assistant, not a licensed financial adviser.)\n\nHow can I help you manage your portfolio, build plans, or assess investment suitability today?`,
+      text: `Hello! I am XyraFin Advisor, your autonomous wealth assistant operating within our simulated brokerage sandbox.\n\n(Important Regulatory Notice: I am an automated simulated assistant, not a licensed financial adviser.)\n\nHow can I help you manage your portfolio, build goal plans, or assess investment suitability today?`,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
@@ -48,9 +47,21 @@ export const AdvisorChat: React.FC<AdvisorChatProps> = ({
   const [pendingCount, setPendingCount] = useState(0);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    // Only scroll the internal chat container, never the outer window/page
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
   }, [messages, loading]);
 
   const quickPrompts = [
@@ -118,68 +129,64 @@ export const AdvisorChat: React.FC<AdvisorChatProps> = ({
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-140px)]">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-175px)] font-sans">
       {/* Left Chat Window */}
-      <div className="lg:col-span-7 flex flex-col bg-navy-900 border border-navy-800 rounded-2xl overflow-hidden shadow-2xl">
+      <div className="lg:col-span-7 flex flex-col bg-white border border-[#1e1e1e]/10 rounded-sm overflow-hidden shadow-sm">
         {/* Chat Header */}
-        <div className="px-5 py-3.5 border-b border-navy-800 bg-navy-950/60 flex items-center justify-between">
+        <div className="px-5 py-3.5 border-b border-[#1e1e1e]/10 bg-[#f2f2f2] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-cyan to-blue-600 flex items-center justify-center text-navy-950 font-bold shadow-lg shadow-brand-cyan/20">
-              <Bot className="w-5 h-5 text-navy-950" />
+            <div className="w-8 h-8 rounded-sm bg-[#111111] text-[#f2f2f2] flex items-center justify-center font-semibold text-xs shadow-sm">
+              <Bot className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-sm font-semibold text-slate-100">XyraFin Financial Participant</h2>
-                <span
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                    agentMode === 'llm'
-                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                      : 'bg-amber-500/10 text-amber-300 border-amber-500/30'
-                  }`}
-                >
-                  {agentMode === 'llm' ? '● LLM CONNECTED' : '● OFFLINE DETERMINISTIC'}
+                <span className="text-xs font-clash font-bold text-[#111111]">XyraFin Advisor</span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#1e1e1e]/15 bg-white text-[#111111]">
+                  {agentMode === 'llm' ? '● LLM CONNECTED' : '● DETERMINISTIC ENGINE'}
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400">Autonomous Execution Inside Permission Limits</p>
+              <span className="text-[11px] font-mono text-[#838282]">Autonomous Financial Participant</span>
             </div>
           </div>
 
           <button
             onClick={handleUploadFactsheet}
-            title="Upload malicious factsheet to demo prompt injection quarantine"
-            className="flex items-center gap-1.5 text-xs text-brand-cyan bg-brand-cyan/10 hover:bg-brand-cyan/20 border border-brand-cyan/30 px-3 py-1.5 rounded-lg transition"
+            title="Upload malicious factsheet to test prompt injection quarantine"
+            className="flex items-center gap-1.5 text-xs text-[#111111] bg-white hover:bg-[#111111] hover:text-[#f2f2f2] border border-[#1e1e1e]/15 px-3 py-1.5 rounded-full transition shadow-sm font-mono"
           >
             <Upload className="w-3.5 h-3.5" />
-            <span>Adversarial Factsheet Test</span>
+            <span>Adversarial Factsheet</span>
           </button>
         </div>
 
         {/* Messages Body */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-4">
+        <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-5 space-y-4 bg-white">
           {messages.map((m) => (
             <div
               key={m.id}
               className={`flex items-start gap-3 ${m.sender === 'user' ? 'flex-row-reverse' : ''}`}
             >
               <div
-                className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                  m.sender === 'user' ? 'bg-blue-600 text-white' : 'bg-navy-800 text-brand-cyan border border-navy-700'
+                className={`w-7 h-7 rounded-sm flex items-center justify-center shrink-0 text-xs font-semibold ${
+                  m.sender === 'user'
+                    ? 'bg-[#111111] text-[#f2f2f2]'
+                    : 'bg-[#f2f2f2] text-[#111111] border border-[#1e1e1e]/15'
                 }`}
               >
-                {m.sender === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+                {m.sender === 'user' ? 'U' : <Bot className="w-3.5 h-3.5" />}
               </div>
 
               <div
-                className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                className={`max-w-[85%] rounded-sm px-4 py-3 text-xs leading-relaxed ${
                   m.sender === 'user'
-                    ? 'bg-blue-600 text-white rounded-tr-none'
-                    : 'bg-navy-850 text-slate-200 border border-navy-800 rounded-tl-none whitespace-pre-wrap'
+                    ? 'bg-[#111111] text-[#f2f2f2] font-satoshi font-medium'
+                    : 'bg-[#f2f2f2] text-[#111111] border border-[#1e1e1e]/10 whitespace-pre-wrap font-satoshi font-medium'
                 }`}
               >
                 {m.text}
                 <div
-                  className={`text-[10px] mt-1.5 ${
-                    m.sender === 'user' ? 'text-blue-200 text-right' : 'text-slate-400'
+                  className={`text-[10px] mt-2 font-mono ${
+                    m.sender === 'user' ? 'text-zinc-400 text-right' : 'text-[#838282]'
                   }`}
                 >
                   {m.time}
@@ -190,12 +197,12 @@ export const AdvisorChat: React.FC<AdvisorChatProps> = ({
 
           {loading && (
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-navy-800 text-brand-cyan flex items-center justify-center">
-                <Bot className="w-4 h-4" />
+              <div className="w-7 h-7 rounded-sm bg-[#f2f2f2] border border-[#1e1e1e]/15 flex items-center justify-center text-[#111111]">
+                <Bot className="w-3.5 h-3.5" />
               </div>
-              <div className="bg-navy-850 border border-navy-800 rounded-2xl rounded-tl-none px-4 py-3 text-sm flex items-center gap-2 text-slate-300">
-                <Cpu className="w-4 h-4 animate-spin text-brand-cyan" />
-                <span>Evaluating financial domain logic & policy rules...</span>
+              <div className="bg-[#f2f2f2] border border-[#1e1e1e]/10 rounded-sm px-4 py-2.5 text-xs flex items-center gap-2 text-[#838282] font-mono">
+                <Cpu className="w-3.5 h-3.5 animate-spin text-[#111111]" />
+                <span>Evaluating financial domain logic &amp; policy rules...</span>
               </div>
             </div>
           )}
@@ -204,13 +211,13 @@ export const AdvisorChat: React.FC<AdvisorChatProps> = ({
         </div>
 
         {/* Quick Prompts Bar */}
-        <div className="px-5 py-2 border-t border-navy-800 bg-navy-950/40 overflow-x-auto flex gap-2 no-scrollbar">
+        <div className="px-4 py-2.5 border-t border-[#1e1e1e]/10 bg-[#f2f2f2] overflow-x-auto flex gap-2 no-scrollbar">
           {quickPrompts.map((p, i) => (
             <button
               key={i}
               onClick={() => handleSend(p)}
               disabled={loading}
-              className="text-[11px] whitespace-nowrap bg-navy-800 hover:bg-navy-700 text-slate-300 hover:text-brand-cyan border border-navy-700 px-3 py-1 rounded-full transition"
+              className="text-[11px] whitespace-nowrap bg-white hover:bg-[#111111] text-[#111111] hover:text-[#f2f2f2] border border-[#1e1e1e]/15 px-3 py-1 rounded-full font-mono transition"
             >
               {p}
             </button>
@@ -218,13 +225,13 @@ export const AdvisorChat: React.FC<AdvisorChatProps> = ({
         </div>
 
         {/* Input Bar */}
-        <div className="p-4 border-t border-navy-800 bg-navy-950">
+        <div className="p-3.5 border-t border-[#1e1e1e]/10 bg-white">
           <form
             onSubmit={(e) => {
               e.preventDefault();
               handleSend();
             }}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2.5"
           >
             <input
               type="text"
@@ -232,12 +239,13 @@ export const AdvisorChat: React.FC<AdvisorChatProps> = ({
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask for advice, product comparison, planning, or order placement..."
               disabled={loading}
-              className="flex-1 bg-navy-900 border border-navy-700 text-slate-100 placeholder-slate-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-cyan transition"
+              className="flex-1 bg-[#f2f2f2] border border-[#1e1e1e]/15 text-[#111111] placeholder-[#838282] rounded-full px-4 py-2.5 text-xs focus:outline-none focus:border-[#111111] transition font-satoshi"
             />
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="bg-brand-cyan text-navy-950 hover:bg-cyan-300 disabled:opacity-40 disabled:hover:bg-brand-cyan font-bold px-4 py-3 rounded-xl flex items-center justify-center transition shadow-lg shadow-brand-cyan/20"
+              className="bg-[#111111] hover:bg-black text-[#f2f2f2] font-semibold p-2.5 rounded-full flex items-center justify-center transition shadow-sm disabled:opacity-40"
+              title="Send Message"
             >
               <Send className="w-4 h-4" />
             </button>
@@ -246,108 +254,70 @@ export const AdvisorChat: React.FC<AdvisorChatProps> = ({
       </div>
 
       {/* Right Agent Activity & Policy Gate Feed */}
-      <div className="lg:col-span-5 flex flex-col bg-navy-900 border border-navy-800 rounded-2xl overflow-hidden shadow-2xl">
-        <div className="px-5 py-3.5 border-b border-navy-800 bg-navy-950/60 flex items-center justify-between">
+      <div className="lg:col-span-5 flex flex-col bg-white border border-[#1e1e1e]/10 rounded-sm overflow-hidden shadow-sm">
+        <div className="px-5 py-3.5 border-b border-[#1e1e1e]/10 bg-[#f2f2f2] flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-brand-cyan" />
-            <h3 className="text-sm font-semibold text-slate-100">Live Agent Decision Chain</h3>
+            <Terminal className="w-3.5 h-3.5 text-[#111111]" />
+            <span className="text-xs font-clash font-bold text-[#111111]">Live Decision Chain</span>
           </div>
-          <span className="text-[11px] text-slate-400">Policy Gates Active</span>
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white border border-[#1e1e1e]/15 text-[#111111] font-semibold">
+            AUDITED TS ENGINE
+          </span>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
-          {pendingCount > 0 && (
-            <div className="p-3 bg-amber-500/10 border border-amber-500/40 rounded-xl flex items-center justify-between">
-              <div className="flex items-center gap-2 text-xs text-amber-300 font-medium">
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                <span>{pendingCount} proposal(s) awaiting your Tier L3 Human Authorization.</span>
-              </div>
-              <button
-                onClick={onNavigateToApprovals}
-                className="text-xs font-semibold bg-amber-400 text-navy-950 px-2.5 py-1 rounded hover:bg-amber-300 flex items-center gap-1 transition"
-              >
-                Review <ArrowRight className="w-3 h-3" />
-              </button>
-            </div>
-          )}
-
+        <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-white">
           {activeActivity.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-center p-8 text-slate-500 space-y-2">
-              <ShieldCheck className="w-10 h-10 text-slate-600 mb-1" />
-              <p className="text-sm font-medium text-slate-400">Policy Engine Idle</p>
-              <p className="text-xs text-slate-500 max-w-xs">
-                As the agent acts, each tool call, its permission tier (L0–L3), and deterministic policy decisions will display live here.
+            <div className="h-full flex flex-col items-center justify-center text-center p-6 text-[#838282] space-y-3">
+              <div className="w-12 h-12 rounded-full bg-[#f2f2f2] border border-[#1e1e1e]/15 flex items-center justify-center text-[#111111]">
+                <Terminal className="w-5 h-5" />
+              </div>
+              <p className="text-xs text-[#111111] font-semibold">Agent tool calls and suitability decisions will render here in real time.</p>
+              <p className="text-[11px] text-[#838282] max-w-xs font-mono leading-relaxed">
+                Every calculation is executed by deterministic TypeScript modules—the LLM is strictly an explainer.
               </p>
             </div>
           ) : (
-            activeActivity.map((activity, idx) => {
-              const { name, auth } = activity;
-              const isAllow = auth?.decision === 'ALLOW' || auth?.decision === 'EXECUTED';
-              const isNeedsApproval = auth?.decision === 'NEEDS_APPROVAL';
-              const isDenied = auth?.decision === 'DENIED' || auth?.decision === 'BLOCKED';
+            activeActivity.map((tool, idx) => {
+              const isAllow = tool.auth?.decision === 'ALLOW' || tool.auth?.decision === 'EXECUTED';
+              const isNeedsApproval = tool.auth?.decision === 'NEEDS_APPROVAL';
 
               return (
                 <div
                   key={idx}
-                  className={`p-3.5 rounded-xl border transition-all ${
-                    isDenied
-                      ? 'bg-rose-950/20 border-rose-500/40'
-                      : isNeedsApproval
-                      ? 'bg-amber-950/20 border-amber-500/40'
-                      : 'bg-navy-850/80 border-navy-700/80'
-                  }`}
+                  className="bg-[#f2f2f2] border border-[#1e1e1e]/10 rounded-sm p-3.5 space-y-2 text-xs font-mono"
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-mono font-bold text-slate-200">
-                      tool::{name}()
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-[#111111] flex items-center gap-1.5">
+                      <Zap className="w-3 h-3 text-[#111111]" />
+                      {tool.name}
                     </span>
-
-                    <div className="flex items-center gap-1.5">
-                      {/* Tier Badge */}
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-navy-800 text-slate-300 border border-navy-700">
-                        {auth?.tier || 'L0'}
-                      </span>
-
-                      {/* Decision Badge */}
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1 ${
-                          isAllow
-                            ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
-                            : isNeedsApproval
-                            ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                            : 'bg-rose-500/20 text-rose-400 border border-rose-500/40'
-                        }`}
-                      >
-                        {isAllow && <ShieldCheck className="w-3 h-3" />}
-                        {isNeedsApproval && <AlertCircle className="w-3 h-3" />}
-                        {isDenied && <ShieldAlert className="w-3 h-3" />}
-                        {auth?.decision}
-                      </span>
-                    </div>
+                    <span
+                      className={`text-[10px] px-2 py-0.5 rounded font-mono ${
+                        isAllow
+                          ? 'bg-white border border-[#1e1e1e]/15 text-[#111111] font-bold'
+                          : isNeedsApproval
+                          ? 'bg-[#111111] text-[#f2f2f2]'
+                          : 'bg-white border border-[#1e1e1e]/10 text-[#838282]'
+                      }`}
+                    >
+                      {tool.auth?.tier || 'L1'} • {tool.auth?.decision || 'EXECUTED'}
+                    </span>
                   </div>
 
-                  {/* Rules Triggered */}
-                  {auth?.ruleIds && auth.ruleIds.length > 0 && (
-                    <div className="flex items-center gap-1 text-[11px] text-slate-400 mb-1">
-                      <span className="text-slate-500 font-medium">Rules:</span>
-                      <span className="font-mono text-brand-cyan">{auth.ruleIds.join(', ')}</span>
-                    </div>
+                  {tool.auth?.reason && (
+                    <p className="text-[11px] text-[#838282] leading-relaxed font-satoshi font-medium">
+                      {tool.auth.reason}
+                    </p>
                   )}
 
-                  {/* Reason text */}
-                  <p className="text-xs text-slate-300 leading-snug">
-                    {auth?.reason || 'Tool execution evaluated.'}
-                  </p>
-
-                  {/* If needs approval, show action link */}
-                  {isNeedsApproval && (
-                    <div className="mt-2.5 pt-2 border-t border-amber-500/20 flex items-center justify-between text-xs text-amber-300">
-                      <span>Requires 6-Digit PIN</span>
+                  {tool.auth?.decision === 'NEEDS_APPROVAL' && (
+                    <div className="pt-2 flex justify-end">
                       <button
                         onClick={onNavigateToApprovals}
-                        className="font-semibold underline hover:text-amber-200"
+                        className="px-3 py-1 bg-[#111111] hover:bg-black text-[#f2f2f2] font-semibold rounded-full text-[11px] transition flex items-center gap-1 shadow-sm font-mono"
                       >
-                        Authorize in Approvals →
+                        <span>Approve with PIN</span>
+                        <ArrowRight className="w-3 h-3" />
                       </button>
                     </div>
                   )}

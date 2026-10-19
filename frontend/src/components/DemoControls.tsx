@@ -54,54 +54,58 @@ export const DemoControls: React.FC<DemoControlsProps> = ({ currentDay, currentS
   };
 
   return (
-    <div className="bg-navy-900 border border-navy-700/80 rounded-xl overflow-hidden shadow-lg transition-all">
+    <div className="bg-white border border-[#1e1e1e]/10 rounded-sm overflow-hidden shadow-sm transition-all font-sans">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-4 py-2.5 flex items-center justify-between text-xs font-semibold tracking-wider text-brand-cyan hover:bg-navy-850 transition-colors"
+        className="w-full px-5 py-3 flex items-center justify-between text-xs font-semibold text-[#111111] hover:bg-[#f2f2f2] transition"
       >
-        <span className="flex items-center gap-2">
-          <Clock className="w-3.5 h-3.5 text-brand-cyan animate-pulse" />
-          SIMULATION CONTROLS (DAY {currentDay} • {currentScenario.toUpperCase()})
+        <span className="flex items-center gap-2 font-mono text-xs">
+          <Clock className="w-3.5 h-3.5 text-[#111111]" />
+          <span>SIMULATION CONTROLLER (DAY {currentDay} • {currentScenario.toUpperCase()} REGIME)</span>
         </span>
-        {isOpen ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+        {isOpen ? <ChevronUp className="w-3.5 h-3.5 text-[#838282]" /> : <ChevronDown className="w-3.5 h-3.5 text-[#838282]" />}
       </button>
 
       {isOpen && (
-        <div className="p-4 border-t border-navy-800 bg-navy-950/70 space-y-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-slate-400 font-medium">Advance Clock:</span>
+        <div className="p-5 border-t border-[#1e1e1e]/10 bg-[#f2f2f2] space-y-4 animate-fade-in text-xs font-mono">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <span className="text-[11px] text-[#838282] uppercase tracking-wider font-bold">
+              Clock:
+            </span>
             <button
               onClick={() => handleAdvance(1)}
               disabled={loading}
-              className="px-2.5 py-1 text-xs bg-navy-800 hover:bg-navy-700 text-slate-200 rounded border border-navy-700 transition"
+              className="px-3 py-1.5 text-xs bg-white hover:bg-[#111111] text-[#111111] hover:text-[#f2f2f2] rounded-full border border-[#1e1e1e]/15 transition shadow-sm font-semibold"
             >
               +1 Day (T+1 Settle)
             </button>
             <button
               onClick={() => handleAdvance(30)}
               disabled={loading}
-              className="px-2.5 py-1 text-xs bg-navy-800 hover:bg-navy-700 text-slate-200 rounded border border-navy-700 transition"
+              className="px-3 py-1.5 text-xs bg-white hover:bg-[#111111] text-[#111111] hover:text-[#f2f2f2] rounded-full border border-[#1e1e1e]/15 transition shadow-sm font-semibold"
             >
-              +30 Days
+              +30 Days (Monthly)
             </button>
             <button
               onClick={() => handleAdvance(90)}
               disabled={loading}
-              className="px-2.5 py-1 text-xs bg-navy-800 hover:bg-navy-700 text-slate-200 rounded border border-navy-700 transition"
+              className="px-3 py-1.5 text-xs bg-white hover:bg-[#111111] text-[#111111] hover:text-[#f2f2f2] rounded-full border border-[#1e1e1e]/15 transition shadow-sm font-semibold"
             >
-              +90 Days
+              +90 Days (Quarterly)
             </button>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-slate-400 font-medium">Scenario Trigger:</span>
+          <div className="flex flex-wrap items-center gap-2.5 pt-3 border-t border-[#1e1e1e]/10">
+            <span className="text-[11px] text-[#838282] uppercase tracking-wider font-bold">
+              Macro Shock Simulator:
+            </span>
             <button
               onClick={() => handleScenario('normal')}
               disabled={loading}
-              className={`px-2.5 py-1 text-xs rounded border transition ${
+              className={`px-3 py-1.5 text-xs rounded-full border transition ${
                 currentScenario === 'normal'
-                  ? 'bg-blue-600/30 text-blue-400 border-blue-500'
-                  : 'bg-navy-800 text-slate-300 border-navy-700 hover:bg-navy-700'
+                  ? 'bg-[#111111] text-[#f2f2f2] border-[#111111] font-bold shadow-sm'
+                  : 'bg-white text-[#111111] border-[#1e1e1e]/15 hover:bg-[#111111] hover:text-[#f2f2f2]'
               }`}
             >
               Normal Market
@@ -109,38 +113,43 @@ export const DemoControls: React.FC<DemoControlsProps> = ({ currentDay, currentS
             <button
               onClick={() => handleScenario('crash')}
               disabled={loading}
-              className={`px-2.5 py-1 text-xs flex items-center gap-1 rounded border transition ${
+              className={`px-3 py-1.5 text-xs flex items-center gap-1.5 rounded-full border transition ${
                 currentScenario === 'crash'
-                  ? 'bg-rose-600/30 text-rose-400 border-rose-500'
-                  : 'bg-navy-800 text-rose-300 border-navy-700 hover:bg-navy-700'
+                  ? 'bg-[#111111] text-[#f2f2f2] border-[#111111] font-bold shadow-sm'
+                  : 'bg-white text-[#111111] border-[#1e1e1e]/15 hover:bg-[#111111] hover:text-[#f2f2f2]'
               }`}
             >
-              <AlertTriangle className="w-3 h-3 text-rose-400" />
-              Crash (-25%)
+              <AlertTriangle className="w-3 h-3" />
+              Flash Crash (-25%)
             </button>
             <button
               onClick={() => handleScenario('rally')}
               disabled={loading}
-              className={`px-2.5 py-1 text-xs flex items-center gap-1 rounded border transition ${
+              className={`px-3 py-1.5 text-xs flex items-center gap-1.5 rounded-full border transition ${
                 currentScenario === 'rally'
-                  ? 'bg-emerald-600/30 text-emerald-400 border-emerald-500'
-                  : 'bg-navy-800 text-emerald-300 border-navy-700 hover:bg-navy-700'
+                  ? 'bg-[#111111] text-[#f2f2f2] border-[#111111] font-bold shadow-sm'
+                  : 'bg-white text-[#111111] border-[#1e1e1e]/15 hover:bg-[#111111] hover:text-[#f2f2f2]'
               }`}
             >
-              <TrendingUp className="w-3 h-3 text-emerald-400" />
-              Rally (+15%)
+              <TrendingUp className="w-3 h-3" />
+              Bull Rally (+15%)
             </button>
+
             <button
               onClick={handleReset}
               disabled={loading}
-              className="ml-auto px-3 py-1 text-xs bg-slate-800 hover:bg-slate-700 text-amber-300 rounded border border-amber-500/40 flex items-center gap-1 transition"
+              className="ml-auto px-3.5 py-1.5 text-xs bg-white hover:bg-[#111111] text-[#838282] hover:text-[#f2f2f2] rounded-full border border-[#1e1e1e]/15 flex items-center gap-1.5 transition font-mono"
             >
               <RefreshCw className="w-3 h-3" />
-              Reset Demo
+              Reset Demo State
             </button>
           </div>
 
-          {message && <div className="text-xs text-brand-cyan bg-brand-cyan/10 px-3 py-1.5 rounded">{message}</div>}
+          {message && (
+            <div className="text-xs text-[#111111] bg-white border border-[#1e1e1e]/15 px-4 py-2 rounded-sm font-mono shadow-sm">
+              {message}
+            </div>
+          )}
         </div>
       )}
     </div>
