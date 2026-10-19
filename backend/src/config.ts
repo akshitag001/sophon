@@ -26,7 +26,12 @@ if (!parsed.success) {
   process.exit(1);
 }
 
+const isLocalOllama =
+  parsed.data.LLM_BASE_URL.includes('11434') ||
+  parsed.data.LLM_BASE_URL.includes('localhost') ||
+  parsed.data.LLM_BASE_URL.includes('127.0.0.1');
+
 export const config = {
   ...parsed.data,
-  isOfflineMode: !parsed.data.LLM_API_KEY || parsed.data.LLM_API_KEY.trim() === ''
+  isOfflineMode: !isLocalOllama && (!parsed.data.LLM_API_KEY || parsed.data.LLM_API_KEY.trim() === '')
 };
