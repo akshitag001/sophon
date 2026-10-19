@@ -1,4 +1,4 @@
-# XyraFin
+# Sophon
 
 **Autonomous AI Wealth Advisory Participant**  
 *2026 Shenzhen International FinTechathon — Topic B: AI Wealth Assistant*
@@ -7,9 +7,9 @@
 
 ## Executive Summary
 
-XyraFin is an autonomous AI wealth advisory assistant designed for first-time retail investors. Built specifically for the 2026 Shenzhen International FinTechathon (Topic B: AI Wealth Assistant), the system addresses the competition theme: **"AI as a Financial Participant"**.
+Sophon is an autonomous AI wealth advisory assistant designed for first-time retail investors. Built specifically for the 2026 Shenzhen International FinTechathon (Topic B: AI Wealth Assistant), the system addresses the competition theme: **"AI as a Financial Participant"**.
 
-Unlike conventional conversational chatbots that only answer questions, or traditional robo-advisors that rely on opaque scoring algorithms, XyraFin actively acts as an authorized financial participant. It places simulated orders, monitors asset allocation drift, and executes portfolio rebalancing within pre-signed mandate boundaries.
+Named after the multidimensional computational entities in Liu Cixin's *The Three-Body Problem*, Sophon represents ultimate analytical precision. Unlike conventional conversational chatbots that only answer questions, or traditional robo-advisors that rely on opaque scoring algorithms, Sophon actively acts as an authorized financial participant. It places simulated orders, monitors asset allocation drift, and executes portfolio rebalancing within pre-signed mandate boundaries.
 
 The architecture enforces a strict non-negotiable rule: **"Code computes, the model explains."** All risk assessments, suitability checks, fee drags, asset allocations, and Monte Carlo projections are computed by deterministic TypeScript algorithms. The large language model operates strictly as an explainer and tool orchestrator, preventing hallucinations and regulatory non-compliance.
 
@@ -18,16 +18,16 @@ The architecture enforces a strict non-negotiable rule: **"Code computes, the mo
 ## Visual Previews
 
 ### Swiss-Style Editorial Interface & Typographic Echo Stack
-![XyraFin Editorial Hero](docs/assets/xyrafin-hero.png)
+![Sophon Editorial Hero](docs/assets/sophon-hero.png)
 
 ### Asymmetrical Showcase Grid & Architecture
-![XyraFin Showcase Grid](docs/assets/xyrafin-showcase.png)
+![Sophon Showcase Grid](docs/assets/sophon-showcase.png)
 
-### Autonomous Advisor Chat & Live Audited Decision Chain
-![XyraFin Advisor Chat](docs/assets/xyrafin-advisor.png)
+### Autonomous Advisor Chat & Live Audited Decision Chain (Ollama / Local LLM)
+![Sophon Advisor Chat](docs/assets/sophon-advisor.png)
 
 ### 5,000-Path Monte Carlo Simulation & Target Allocation
-![XyraFin Monte Carlo Engine](docs/assets/xyrafin-montecarlo.png)
+![Sophon Monte Carlo Engine](docs/assets/sophon-montecarlo.png)
 
 ---
 
@@ -57,8 +57,8 @@ The architecture enforces a strict non-negotiable rule: **"Code computes, the mo
 - Every user input, tool execution, suitability evaluation, order placement, and system event is recorded in an append-only, SHA-256 hash-chained database.
 - Integrity can be verified programmatically via hash-chain recomputation (`verifyChain()`), providing tamper-evident audit evidence for compliance bodies.
 
-### 5. Deterministic Offline Mode
-- Full support for both live LLM APIs (OpenAI, DeepSeek, or any OpenAI-compatible endpoint) and a deterministic fallback engine.
+### 5. Dual-Engine LLM Support (Local Ollama & Cloud)
+- Built-in support for local Ollama endpoints (`http://localhost:11434/v1`) with GPU acceleration (RTX 4070), cloud OpenAI-compatible APIs (DeepSeek, OpenAI), and a 100% deterministic offline fallback engine.
 - Demonstrations and tests can run completely offline without external network dependencies or API keys.
 
 ---
@@ -105,7 +105,7 @@ The architecture enforces a strict non-negotiable rule: **"Code computes, the mo
 ## Project Structure
 
 ```
-XyraFin-main/
+Sophon/
 ├── backend/
 │   ├── src/
 │   │   ├── agent/            # Tool definitions, prompt builders, deterministic fallback
@@ -167,13 +167,13 @@ npm run dev       # Starts development server on http://localhost:5173
 
 Open `http://localhost:5173` in your browser to interact with the application.
 
-### Optional: LLM Configuration
-By default, XyraFin operates in deterministic offline mode with zero configuration. To connect a live LLM endpoint, set the following environment variables in `backend/.env`:
+### Optional: Local Ollama / LLM Configuration
+To connect to local Ollama with GPU acceleration, create `backend/.env`:
 
 ```env
-LLM_BASE_URL=https://api.deepseek.com/v1
-LLM_API_KEY=your_api_key_here
-LLM_MODEL=deepseek-chat
+LLM_BASE_URL=http://localhost:11434/v1
+LLM_MODEL=llama3.2:latest
+LLM_API_KEY=ollama
 ```
 
 ---

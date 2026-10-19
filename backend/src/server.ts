@@ -26,7 +26,7 @@ app.use(express.json({ limit: '10mb' }));
 app.get('/health', (req: Request, res: Response) => {
   res.json({
     status: 'OK',
-    product: 'XyraFin Advisor',
+    product: 'Sophon Advisor',
     version: '1.0.0',
     mode: config.isOfflineMode ? 'offline' : 'llm',
     model: config.isOfflineMode ? 'deterministic-fallback' : config.LLM_MODEL,
@@ -77,7 +77,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 if (process.env.NODE_ENV !== 'test') {
   getDb();
   app.listen(config.PORT, () => {
-    console.log(`🚀 XyraFin Advisor server listening on port ${config.PORT}`);
+    console.log(`🚀 Sophon Advisor server listening on port ${config.PORT}`);
     console.log(`🔒 Operating mode: ${config.isOfflineMode ? 'OFFLINE (Deterministic Fallback)' : `LLM (${config.LLM_MODEL})`}`);
   });
 }

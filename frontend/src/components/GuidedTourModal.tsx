@@ -59,7 +59,7 @@ export const GuidedTourModal: React.FC<GuidedTourModalProps> = ({
       tab: 'chat',
       persona: 'priya',
       summary: 'Meet Priya: A 24-year-old retail investor with $20,000 cash starting her simulated investment journey.',
-      talkingPoint: '"Most AI financial tools act as basic chat bots. XyraFin is built as an active, audited financial participant governed by deterministic code."',
+      talkingPoint: '"Most AI financial tools act as basic chat bots. Sophon is built as an active, audited financial participant governed by deterministic code."',
       actionLabel: 'Switch to Priya & Open Chat',
       action: () => onNavigate('chat', 'priya')
     },

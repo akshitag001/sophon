@@ -36,7 +36,7 @@ export const AdvisorChat: React.FC<AdvisorChatProps> = ({
     {
       id: 'init-1',
       sender: 'agent',
-      text: `Hello! I am XyraFin Advisor, your autonomous wealth assistant operating within our simulated brokerage sandbox.\n\n(Important Regulatory Notice: I am an automated simulated assistant, not a licensed financial adviser.)\n\nHow can I help you manage your portfolio, build goal plans, or assess investment suitability today?`,
+      text: `Hello! I am Sophon Advisor, your autonomous wealth assistant operating within our simulated brokerage sandbox.\n\n(Important Regulatory Notice: I am an automated simulated assistant, not a licensed financial adviser.)\n\nHow can I help you manage your portfolio, build goal plans, or assess investment suitability today?`,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
@@ -140,7 +140,7 @@ export const AdvisorChat: React.FC<AdvisorChatProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-clash font-bold text-[#111111]">XyraFin Advisor</span>
+                <span className="text-xs font-clash font-bold text-[#111111]">Sophon Advisor</span>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#1e1e1e]/15 bg-white text-[#111111]">
                   {agentMode === 'llm' ? '● LLM CONNECTED' : '● DETERMINISTIC ENGINE'}
                 </span>

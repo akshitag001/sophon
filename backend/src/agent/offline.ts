@@ -42,7 +42,7 @@ export async function handleOfflineMessage(
     if (res.result.error) {
       const qRes = await executeToolCall('start_risk_questionnaire', {}, userId, db);
       toolCalls.push(qRes);
-      rawReply = `Welcome to XyraFin Advisor. (Disclaimer: I am an AI financial assistant operating in a simulation sandbox, not a licensed human adviser.)\n\nYou do not have an active risk profile yet. Let's begin the 10-question suitability questionnaire to assess your financial capacity and psychological risk tolerance.`;
+      rawReply = `Welcome to Sophon Advisor. (Disclaimer: I am an AI financial assistant operating in a simulation sandbox, not a licensed human adviser.)\n\nYou do not have an active risk profile yet. Let's begin the 10-question suitability questionnaire to assess your financial capacity and psychological risk tolerance.`;
     } else {
       rawReply = `Here is your current assessed risk profile:\n- Level: ${res.result.level}/5 (${res.result.label})\n- Financial Capacity: ${res.result.capacity}/5\n- Risk Tolerance: ${res.result.tolerance}/5\n\nFacts: ${res.result.explanationFacts.join(' ')}`;
     }
@@ -61,7 +61,7 @@ export async function handleOfflineMessage(
     const explainRes = await executeToolCall('explain_decision', { ruleId: 'S1' }, userId, db);
     toolCalls.push(explainRes);
 
-    rawReply = `Regulatory Suitability Block: You inquired about the Simulated Ultra 3x Leveraged Equity Daily Growth Fund (lev-3x-12). This product has a risk level of 5/5, which strictly exceeds your assessed risk profile.\n\nSuitability Rule S1 Explanation: ${explainRes.result.explanation}\n\nXyraFin's deterministic code prevents any automated order placement for unsuitable products.`;
+    rawReply = `Regulatory Suitability Block: You inquired about the Simulated Ultra 3x Leveraged Equity Daily Growth Fund (lev-3x-12). This product has a risk level of 5/5, which strictly exceeds your assessed risk profile.\n\nSuitability Rule S1 Explanation: ${explainRes.result.explanation}\n\nSophon's deterministic code prevents any automated order placement for unsuitable products.`;
   }
 
   // 3. Fund Comparison Intent
@@ -157,7 +157,7 @@ export async function handleOfflineMessage(
 
   // Default guided fallback
   else {
-    rawReply = `Hello! I am XyraFin Advisor (Offline Mode). I can assist you with:\n1. Completing your 10-question Risk Profile\n2. Comparing simulated funds and calculating fee drag\n3. Building an optimal asset allocation plan\n4. Running 5,000-path Monte Carlo goal projections\n5. Placing automated trades within your mandate or preparing L3 approvals\n6. Detecting portfolio drift and rebalancing.\n\nWhat would you like to explore?`;
+    rawReply = `Hello! I am Sophon Advisor (Offline Mode). I can assist you with:\n1. Completing your 10-question Risk Profile\n2. Comparing simulated funds and calculating fee drag\n3. Building an optimal asset allocation plan\n4. Running 5,000-path Monte Carlo goal projections\n5. Placing automated trades within your mandate or preparing L3 approvals\n6. Detecting portfolio drift and rebalancing.\n\nWhat would you like to explore?`;
   }
 
   // Apply Output Guard to sanitize and verify numbers

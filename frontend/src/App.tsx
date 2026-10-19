@@ -85,7 +85,7 @@ export default function App() {
   };
 
   const handleForceSeed = async () => {
-    if (!confirm('Re-seed XyraFin demo database? This will reset Priya to $20,000 cash and Chen to a drifted 60/40 portfolio.')) return;
+    if (!confirm('Re-seed Sophon demo database? This will reset Priya to $20,000 cash and Chen to a drifted 60/40 portfolio.')) return;
     try {
       await api.resetSandbox();
       setSeedSuccessMsg('Database re-seeded successfully with demo personas.');
@@ -119,11 +119,11 @@ export default function App() {
             className="flex items-center gap-2.5 text-left group"
           >
             <div className="w-9 h-9 rounded-sm bg-[#111111] text-[#f2f2f2] flex items-center justify-center font-clash font-bold text-base transition-transform group-hover:scale-105">
-              X
+              S
             </div>
             <div className="hidden sm:flex flex-col">
               <span className="font-clash font-bold text-base tracking-tight text-[#111111] leading-none">
-                XYRAFIN
+                SOPHON
               </span>
               <span className="text-[10px] uppercase font-mono tracking-wider text-[#838282] mt-0.5">
                 TOPIC B • AUTONOMOUS
@@ -332,10 +332,10 @@ export default function App() {
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-white">
               <div className="w-7 h-7 bg-white text-[#111111] font-clash font-bold text-sm flex items-center justify-center rounded-sm">
-                X
+                S
               </div>
               <span className="font-clash font-bold text-base tracking-tight text-white">
-                XYRAFIN
+                SOPHON
               </span>
             </div>
             <p className="leading-relaxed">
@@ -424,11 +424,11 @@ export default function App() {
             <ul className="space-y-2.5 text-[12px] font-mono">
               <li className="flex items-center gap-2.5 text-white/80 hover:text-white transition">
                 <Mail className="w-3.5 h-3.5 text-white/60" />
-                <span>contact@xyrafin.ai</span>
+                <span>contact@sophon.ai</span>
               </li>
               <li className="flex items-center gap-2.5 text-white/80 hover:text-white transition">
                 <Globe className="w-3.5 h-3.5 text-white/60" />
-                <span>xyrafin.ai / demo</span>
+                <span>sophon.ai / demo</span>
               </li>
               <li className="flex items-center gap-2.5 text-white/80 hover:text-white transition">
                 <MapPin className="w-3.5 h-3.5 text-white/60" />
@@ -452,7 +452,7 @@ export default function App() {
         </div>
 
         <div className="max-w-7xl mx-auto pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-mono">
-          <span>&copy; 2026 XyraFin. Shenzhen FinTechathon Topic B Project.</span>
+          <span>&copy; 2026 Sophon. Shenzhen FinTechathon Topic B Project.</span>
           <span className="text-[#f6f6f6]/40">Editorial Brutalism • Clash Display &amp; Satoshi</span>
         </div>
       </footer>

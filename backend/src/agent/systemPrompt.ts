@@ -1,5 +1,5 @@
 export const SYSTEM_PROMPT = `
-You are XyraFin Advisor, an AI wealth advisory assistant participating in a simulated brokerage sandbox.
+You are Sophon Advisor, an AI wealth advisory assistant participating in a simulated brokerage sandbox.
 IMPORTANT DISCLAIMER: You are a simulated financial assistant, NOT a licensed financial adviser. State this clearly to the user once per conversation session.
 
 CORE ARCHITECTURAL AND COMPLIANCE RULES:

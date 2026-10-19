@@ -51,7 +51,7 @@ export const SwissEchoHero: React.FC<SwissEchoHeroProps> = ({
             style={{ transform: 'translate(-0.16em, -0.16em)' }}
             aria-hidden="true"
           >
-            XYRAFIN
+            SOPHON
           </span>
 
           {/* Echo Layer 4 (-0.12em) */}
@@ -60,7 +60,7 @@ export const SwissEchoHero: React.FC<SwissEchoHeroProps> = ({
             style={{ transform: 'translate(-0.12em, -0.12em)' }}
             aria-hidden="true"
           >
-            XYRAFIN
+            SOPHON
           </span>
 
           {/* Echo Layer 3 (-0.08em) */}
@@ -69,7 +69,7 @@ export const SwissEchoHero: React.FC<SwissEchoHeroProps> = ({
             style={{ transform: 'translate(-0.08em, -0.08em)' }}
             aria-hidden="true"
           >
-            XYRAFIN
+            SOPHON
           </span>
 
           {/* Echo Layer 2 (-0.04em) */}
@@ -78,12 +78,12 @@ export const SwissEchoHero: React.FC<SwissEchoHeroProps> = ({
             style={{ transform: 'translate(-0.04em, -0.04em)' }}
             aria-hidden="true"
           >
-            XYRAFIN
+            SOPHON
           </span>
 
           {/* Foreground Primary Text */}
           <span className="relative z-10 text-[#111111]">
-            XYRAFIN
+            SOPHON
           </span>
         </div>
 

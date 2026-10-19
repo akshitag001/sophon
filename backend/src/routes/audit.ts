@@ -18,7 +18,7 @@ auditRouter.get('/export', (req: Request, res: Response) => {
   try {
     const jsonLines = exportAuditLog();
     res.setHeader('Content-Type', 'application/x-jsonlines');
-    res.setHeader('Content-Disposition', 'attachment; filename="xyrafin_audit_log.jsonl"');
+    res.setHeader('Content-Disposition', 'attachment; filename="sophon_audit_log.jsonl"');
     res.send(jsonLines);
   } catch (err: any) {
     res.status(500).json({ error: err.message });

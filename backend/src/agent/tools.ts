@@ -371,7 +371,7 @@ export async function executeToolCall(
         S6: 'Rule S6 (Liquidity Notice): The investment settlement timeframe exceeds the stated short-term liquidity horizon.',
         S7: 'Rule S7 (Minimum Investment): Order size is below the institutional fund requirement.'
       };
-      const expl = explanationMap[args.ruleId] || `Policy rule ${args.ruleId}: Enforced under XyraFin deterministic compliance framework.`;
+      const expl = explanationMap[args.ruleId] || `Policy rule ${args.ruleId}: Enforced under Sophon deterministic compliance framework.`;
       return { name, auth, result: { ruleId: args.ruleId, explanation: expl } };
     }
 
