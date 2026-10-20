@@ -1,4 +1,4 @@
-# Multi-stage Dockerfile for single-container deployment of XyraFin Advisor
+# Multi-stage Dockerfile for single-container deployment of Sophon Advisor
 FROM node:20-alpine AS builder
 
 WORKDIR /app

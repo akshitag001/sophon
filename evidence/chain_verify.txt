@@ -1,12 +1,12 @@
 ================================================================================
 XYRAFIN ADVISOR: AUDIT LOG CRYPTOGRAPHIC VERIFICATION REPORT
 ================================================================================
-Generated: 2026-10-18T19:21:22.707Z
+Generated: 2026-10-20T05:12:30.423Z
 Verification Status: VALID (PASSED)
-Total Hash-Chained Events: 13
+Total Hash-Chained Events: 247
 Broken Links / Tampering Detected: 0
 Root Genesis Hash: 0000000000000000000000000000000000000000000000000000000000000000
-Final Chain Head Hash: 73e6054bae29c9606a1e8483757969bb2e5e360cb9c6d610cf38185c22cd84a2
+Final Chain Head Hash: 5bdd2d8170a8dd4e3c7073a400eb6e90b9775064aafe20e648e70211e6dbb338
 Hashing Algorithm: SHA-256 (Canonical JSON Event Encoding)
 Database Triggers: UPDATE/DELETE strictly blocked on audit_events
 ================================================================================

@@ -10,6 +10,7 @@
     "test": "npm --prefix backend test",
     "seed": "npm --prefix backend run seed",
     "evidence": "npm --prefix backend run evidence",
+    "verify-chain": "npm --prefix backend run evidence",
     "build": "npm --prefix backend run build && npm --prefix frontend run build"
   },
   "devDependencies": {

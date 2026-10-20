@@ -43,6 +43,17 @@ export async function runEvidence(): Promise<void> {
   const db = getDb();
   resetClock(db);
 
+  try {
+    db.prepare("DELETE FROM risk_profiles WHERE user_id = 'priya'").run();
+    db.prepare("DELETE FROM mandate_envelopes WHERE user_id = 'priya'").run();
+    db.prepare("DELETE FROM pending_proposals WHERE user_id = 'priya'").run();
+    db.prepare("DELETE FROM orders WHERE user_id = 'priya'").run();
+    db.prepare("DELETE FROM holdings WHERE user_id = 'priya'").run();
+    db.prepare("DELETE FROM accounts WHERE user_id = 'priya'").run();
+  } catch (e) {
+    // ignore
+  }
+
   ensureUserAccount('priya', 20000, db);
 
   console.log('\n[Step 1/8] Priya completes risk questionnaire...');
@@ -65,7 +76,7 @@ export async function runEvidence(): Promise<void> {
   }
 
   db.prepare(`
-    INSERT INTO risk_profiles (
+    INSERT OR REPLACE INTO risk_profiles (
       user_id, level, label, capacity, tolerance,
       answers_json, contradictions_json, explanation_facts_json,
       answered_at, expires_at
